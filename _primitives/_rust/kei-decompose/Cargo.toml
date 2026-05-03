@@ -4,7 +4,8 @@ version = "0.1.0"
 edition.workspace = true
 rust-version.workspace = true
 description = "Universal decomposition layer — turns ANY MD output (research / audit / sleep / architecture / new-project) into kei-spawn-compatible task.toml + dispatch."
-authors = ["Denis Parfionovich <info@greendragon.info>"]
+authors.workspace = true
+license.workspace = true
 
 [[bin]]
 name = "kei-decompose"
