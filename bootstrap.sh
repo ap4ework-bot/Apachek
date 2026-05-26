@@ -177,9 +177,14 @@ fi
 log "checkout: $KIT_DIR"
 
 # --- 5. run install ------------------------------------------------------
-log "running ./install.sh --profile=$PROFILE $YES_FLAG ${EXTRA_FLAGS[*]:-}"
+log "running install.sh --profile=$PROFILE $YES_FLAG ${EXTRA_FLAGS[*]:-}"
 cd "$KIT_DIR"
-./install.sh --profile="$PROFILE" $YES_FLAG "${EXTRA_FLAGS[@]:+${EXTRA_FLAGS[@]}}"
+# Defensive: invoke via `bash` not `./install.sh` because GitHub's contents
+# API does NOT preserve the executable bit on `gh api -X PUT` updates
+# (only the git Data API does). Older clones may have install.sh with
+# mode 644 even though the source repo has it 755. `bash <file>` works
+# regardless of file mode. Verified incident 2026-05-26 prod-curl test.
+bash ./install.sh --profile="$PROFILE" $YES_FLAG "${EXTRA_FLAGS[@]:+${EXTRA_FLAGS[@]}}"
 
 # --- 6. post-install verification ----------------------------------------
 KEI_BIN="$HOME/.claude/agents/_primitives/_rust/target/release"
