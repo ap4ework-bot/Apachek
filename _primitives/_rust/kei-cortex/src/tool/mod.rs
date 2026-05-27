@@ -34,6 +34,7 @@ pub mod registry;
 pub mod schemas;
 pub mod types;
 pub mod webfetch;
+pub mod webfetch_policy;
 pub mod write;
 
 #[cfg(test)]
