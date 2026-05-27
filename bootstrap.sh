@@ -130,9 +130,11 @@ elif [ -r "$HOME/.claude/scripts/kei-prompt.sh" ]; then
 else
     # Self-contained fallback so bootstrap never breaks when run from a
     # weird directory. Mirrors kei_is_interactive's contract only.
+    # v0.49.2: probe open(/dev/tty) in subshell — `[ -r /dev/tty ]` lies
+    # in some envs (CI, sandbox); a bare `read </dev/tty` then dies under set -e.
     kei_is_interactive() {
         [ "${KEI_NONINTERACTIVE:-0}" = "1" ] && return 1
-        if [ -r /dev/tty ] && [ -w /dev/tty ]; then return 0; fi
+        if [ -r /dev/tty ] && [ -w /dev/tty ] && (exec 0</dev/tty) 2>/dev/null; then return 0; fi
         [ -t 0 ] && return 0
         return 1
     }
@@ -252,14 +254,19 @@ log "checkout: $KIT_DIR"
 log "running install.sh --profile=$PROFILE $YES_FLAG ${EXTRA_FLAGS[*]:-}"
 cd "$KIT_DIR"
 
-# v0.48: reattach stdin to /dev/tty for the install + everything after.
+# v0.48 + v0.49.2: reattach stdin to /dev/tty for the install + after.
 # Under `curl|bash` stdin is the curl pipe, so install.sh's interactive
 # gates (5 places: language pick, preflight, hooks-activate, sleep wizard,
 # PATH wiring) all silently skip via [ -t 0 ] being false. Reattaching ONCE
 # here cascades correctly: every child script inherits the terminal stdin
-# and its [ -t 0 ] returns true. Only do it if /dev/tty is actually
-# present and readable (CI / nohup / systemd: skip — those are headless).
-if [ -r /dev/tty ] && [ -w /dev/tty ]; then
+# and its [ -t 0 ] returns true.
+#
+# v0.49.2 fix: `[ -r /dev/tty ]` is NOT enough — in some envs (CI, sandbox,
+# nohup) the file exists and stat's readable, but open() returns ENXIO
+# "Device not configured". A bare `exec </dev/tty` then aborts the script
+# under `set -e`. Use a subshell probe first: if open works in a child,
+# do the real exec in main shell; otherwise stay headless and continue.
+if [ -r /dev/tty ] && [ -w /dev/tty ] && (exec 0</dev/tty) 2>/dev/null; then
     exec </dev/tty
     log "stdin reattached to /dev/tty (curl|bash interactive prompts will work)"
 fi

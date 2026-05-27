@@ -65,9 +65,10 @@ elif [ -r "$HOME/.claude/scripts/kei-prompt.sh" ]; then
     source "$HOME/.claude/scripts/kei-prompt.sh"
 else
     # Self-contained fallback — same contract as the cube's kei_is_interactive.
+    # v0.49.2: probe open(/dev/tty) — `[ -r /dev/tty ]` lies in CI / sandboxes.
     kei_is_interactive() {
         [ "${KEI_NONINTERACTIVE:-0}" = "1" ] && return 1
-        if [ -r /dev/tty ] && [ -w /dev/tty ]; then return 0; fi
+        if [ -r /dev/tty ] && [ -w /dev/tty ] && (exec 0</dev/tty) 2>/dev/null; then return 0; fi
         [ -t 0 ] && return 0
         return 1
     }

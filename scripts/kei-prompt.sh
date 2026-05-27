@@ -38,7 +38,10 @@ _KEI_PROMPT_SOURCED=1
 # Use this EVERYWHERE instead of `[ -t 0 ]` or `[ -t 1 ]`.
 kei_is_interactive() {
     [ "${KEI_NONINTERACTIVE:-0}" = "1" ] && return 1
-    if [ -r /dev/tty ] && [ -w /dev/tty ]; then
+    # v0.49.2: `[ -r /dev/tty ]` lies in some envs (CI, sandbox, nohup) —
+    # the file stat's readable, but open() returns ENXIO. Probe with a
+    # subshell `exec` so a failed open doesn't kill the caller under `set -e`.
+    if [ -r /dev/tty ] && [ -w /dev/tty ] && (exec 0</dev/tty) 2>/dev/null; then
         return 0
     fi
     if [ -t 0 ]; then
