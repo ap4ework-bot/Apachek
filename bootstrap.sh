@@ -118,11 +118,55 @@ have() { command -v "$1" >/dev/null 2>&1; }
 OS="$(uname -s)"
 
 # --- 1. OS detection -----------------------------------------------------
+# Detect WSL2 (uname -s = Linux but kernel reports Microsoft) — full path works.
+# Detect Git Bash / Cygwin / MSYS on bare Windows — substrate cannot run there;
+# guide user to WSL2 instead of dying silently.
+IS_WSL=0
+if [ "$OS" = "Linux" ] && [ -r /proc/version ] && grep -qiE "microsoft|wsl" /proc/version 2>/dev/null; then
+    IS_WSL=1
+fi
+
 case "$OS" in
-    Darwin|Linux) ;;
-    *) err "unsupported OS: $OS (only Darwin / Linux for now)"; exit 1 ;;
+    Darwin|Linux)
+        if [ "$IS_WSL" = "1" ]; then
+            log "OS: WSL2 (Linux inside Windows) — full substrate path available"
+        else
+            log "OS: $OS"
+        fi
+        ;;
+    MINGW*|MSYS*|CYGWIN*)
+        err ""
+        err "Detected: bare Windows ($OS) via Git Bash / Cygwin / MSYS."
+        err ""
+        err "KeiSeiKit's substrate is Bash-only and needs apt/brew + full POSIX —"
+        err "it will not run reliably outside WSL2. Native PowerShell port is NOT"
+        err "on the roadmap (would double maintenance; WSL gives 100% coverage)."
+        err ""
+        err "Path forward (one-time setup, ~5 min + reboot):"
+        err ""
+        err "  1. Open PowerShell as Administrator."
+        err "  2. Run:        wsl --install -d Ubuntu"
+        err "  3. Reboot when prompted; Ubuntu auto-starts on next login."
+        err "  4. Inside Ubuntu, re-run this same bootstrap:"
+        err "       curl -fsSL https://raw.githubusercontent.com/KeiSeiLab/KeiSeiKit-1.0/main/bootstrap.sh | bash"
+        err ""
+        err "Alternative — MCP-only (no substrate, no skills, no hooks):"
+        err "  Grab kei-mcp-server-windows-x64.exe from a release and wire it"
+        err "  into Claude Desktop / VS Code MCP config. Gets you spawn_agent +"
+        err "  kei_bash/kei_edit/kei_write only. See README → Platforms section."
+        err ""
+        # Best-effort: copy the wsl --install command to clipboard if possible.
+        if command -v clip.exe >/dev/null 2>&1; then
+            printf 'wsl --install -d Ubuntu' | clip.exe 2>/dev/null && \
+                err "(I've copied 'wsl --install -d Ubuntu' to your Windows clipboard.)"
+        fi
+        exit 1
+        ;;
+    *)
+        err "unsupported OS: $OS (supported: Darwin / Linux / WSL2)"
+        exit 1
+        ;;
 esac
-log "OS: $OS"
 
 # --- 2. install jq -------------------------------------------------------
 install_jq() {

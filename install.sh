@@ -20,6 +20,28 @@
 
 set -euo pipefail
 
+# --- OS guard (v0.47): friendly message on bare Windows ------------------
+_uname_s="$(uname -s 2>/dev/null || echo unknown)"
+case "$_uname_s" in
+    Darwin|Linux) ;;  # ok
+    MINGW*|MSYS*|CYGWIN*)
+        echo "[install.sh] ERROR: bare Windows ($_uname_s) detected." >&2
+        echo "" >&2
+        echo "KeiSeiKit's substrate is Bash-only. Use WSL2 instead:" >&2
+        echo "  1. PowerShell (admin):  wsl --install -d Ubuntu" >&2
+        echo "  2. Reboot when prompted; launch Ubuntu." >&2
+        echo "  3. Inside Ubuntu, re-run this installer." >&2
+        echo "" >&2
+        echo "See README → 'Platforms' for the full path + MCP-only fallback." >&2
+        exit 1
+        ;;
+    *)
+        echo "[install.sh] ERROR: unsupported OS: $_uname_s (supported: Darwin / Linux / WSL2)" >&2
+        exit 1
+        ;;
+esac
+unset _uname_s
+
 # --- paths ----------------------------------------------------------------
 KIT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 HOME_DIR="${HOME:?HOME not set}"
