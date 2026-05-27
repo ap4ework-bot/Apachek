@@ -1,23 +1,56 @@
 # KeiSeiKit
 
-A **multi-LLM substrate** that gives any agentic coding tool persistent
-memory, deterministic agent identity, and self-maintaining orchestration.
-Works first-class with Claude Code; MCP-compatible bridges generate
-context for Cursor / Continue / Zed / Aider / Windsurf / Cline /
-OpenClaw / Kimi from the same source-of-truth.
+A **multi-LLM substrate** for agentic coding. Same agent definition,
+any LLM backend — Claude Code, Grok, Antigravity (Gemini), GitHub
+Copilot, or Kimi. Pick your orchestrator with `kei pick`; agents
+spawn sub-agents on other LLMs via MCP `spawn_agent`; safety hooks
+enforce on every backend through a 3-tier model. Three-phase nightly
+sleep consolidates 30-session windows into morning markdown reports.
 
-**Apache 2.0** — explicit patent grant + retaliation clause. 105 Rust
-crates [REAL: `grep -E '^\s*"[a-z-]+",' _primitives/_rust/Cargo.toml | wc -l`],
-69 skills [REAL: `ls skills/ | wc -l`], 54 hooks
-[REAL: `ls hooks/*.sh | wc -l`], 38 agent manifests
-[REAL: `ls _manifests/*.toml | wc -l`], 85 substrate blocks
-[REAL: `find _blocks/ -name '*.md' | wc -l`], 18 capability atoms
-[REAL: `find _capabilities/ -mindepth 2 -maxdepth 2 -type d | wc -l`],
-7 substrate roles [REAL: `ls _roles/*.toml | wc -l`]. Self-indexing
-via kei-registry SQLite (565 active DNAs
-[REAL: `head -3 docs/DNA-INDEX.md | grep "Total blocks:"`] as of
-2026-05-03). Three-phase nightly consolidation. Foreign-project
-ingestion runtime (`kei-import <repo-url>`).
+**Apache 2.0** — explicit patent grant + retaliation clause.
+
+## Highlights
+
+- **5 LLM CLIs unified.** Claude Code (native hooks), Grok (port to
+  `~/.grok/settings.json`), Antigravity/Gemini, GitHub Copilot, Kimi.
+  DNA-routed: each agent's manifest declares a `provider`;
+  `kei agent <name>` resolves DNA → primary → claude fallback.
+- **Sub-agents on any backend.** Agents call `spawn_agent` (built-in MCP
+  tool in `kei-mcp`) to dispatch other agents to whichever LLM fits
+  the task. Cross-CLI orchestration without lock-in — Grok can spawn
+  critic@Claude, then ml-implementer@Gemini, all from one session.
+- **3-tier policy enforcement.** Claude + Grok TIER 1 (full native
+  PreToolUse), Copilot TIER 2 (MCP-wrapped + `--excluded-tools=shell`),
+  Agy + Kimi TIER 3 (advisory). `no-github-push`, `safety-guard`,
+  `destructive-guard`, `citation-verify`, `numeric-claims-guard`
+  surface on every backend that supports tool-call gating.
+- **Three-phase nightly sleep.** Phase A (incubation — queued tasks
+  via `/sleep-on-it`), Phase B (REM consolidation — analyzes last 30
+  sessions, writes morning markdown), Phase C (NREM deep-sleep, every
+  7 days — conflict scan + refactor proposals). Outputs are markdown;
+  you decide what merges.
+- **Native token streaming.** Each backend streams in its own print
+  mode (`claude -p`, `grok --print`, `agy --print`, `copilot --prompt`);
+  KeiSeiKit composes the agent prompt + task and passes through. No
+  buffering layer.
+- **Persistent memory.** SQLite ledger + content-addressable store,
+  session-spanning context, cross-machine sync via memory-repo.
+- **Agent DNA.** Deterministic variable-length identity per
+  invocation: `<role>::<caps>::<scope-sha8>::<body-sha8>-<nonce8>`.
+  Same task → same prefix → "did this run before?" via SQL, no
+  embeddings.
+- **Constructor Pattern.** Substrate, not framework. You compose; it
+  doesn't dictate workflow. File >200 LOC → decompose. No mixins, no
+  DI containers, no abstract factories.
+- **Self-maintaining.** Every substrate edit cascades: registry
+  updates, agent regeneration, DNA index refresh, keimd graph
+  reindex. Auto-self-indexing via kei-registry SQLite.
+
+## By the numbers (v0.45)
+
+105 Rust crates · 69 skills · 54 hooks · 38 agent manifests ·
+86 substrate blocks · 18 capability atoms · 7 substrate roles ·
+565 indexed DNAs · 6 install profiles (minimal → full).
 
 ## Maturity matrix
 
@@ -328,25 +361,8 @@ covered by their contributions lose their license to the work.
 Pre-2026-04-30 versions remain available under their original MIT
 terms (irrevocable). See [LICENSE](./LICENSE) and [NOTICE](./NOTICE).
 
-## Author & collaboration
+<!--
+Author / collaboration section removed — to be written by hand.
+TODO: replace this comment with the section you want.
+-->
 
-Built by Denis Parfionovich (`info@greendragon.info`) running
-4–8 parallel Claude Code terminals per day. Solo-maintained.
-Apache 2.0 makes the bus factor manageable: any AI-assisted
-developer (you, your Claude, your Cursor, your Aider) can read
-this codebase and continue it.
-
-**Forks welcome. PRs welcome. Issues welcome.**
-
-**Open to collaboration.** If you have:
-- a use-case this substrate would solve and you can't see how — open
-  a discussion
-- ideas for the SaaS roadmap (cross-machine memory sync, hosted
-  nightly consolidation, encyclopedia-as-API) — email or open an issue
-- a related project you're building (agent infra, MCP servers,
-  cross-tool bridges, prompt-engineering substrates) and want to
-  cross-pollinate — reach out
-- want to integrate KeiSeiKit primitives into your product or
-  research — Apache 2.0 already permits it; happy to help you wire it
-
-Email reaches the author directly. No marketing list, no funnel.
