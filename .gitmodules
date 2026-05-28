@@ -2,3 +2,9 @@
 	path = _blocks/registries
 	url = https://github.com/KeiSeiLab/kei-registries.git
 	shallow = true
+	# v0.53 (2026-05-28): SHA-pinned via parent's gitlink, NOT a moving branch.
+	# Audit finding (external review 2026-05-28): without explicit pin, every
+	# `--recurse-submodules` pulls latest; if upstream is compromised or
+	# transferred → silent supply-chain drift through every install.
+	# Bump via: cd _blocks/registries && git fetch && git checkout <new-sha>
+	#           && cd ../.. && git add _blocks/registries && commit.

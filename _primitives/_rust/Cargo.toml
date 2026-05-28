@@ -201,6 +201,21 @@ license = "Apache-2.0"
 repository = "https://github.com/KeiSeiLab/KeiSeiKit-1.0"
 homepage = "https://github.com/KeiSeiLab/KeiSeiKit-1.0"
 
+# v0.53: clippy workspace lints (audit fix #2 — was "no enforcement on
+# .unwrap()/.expect() density, 3,694 .unwrap() in tree as of 2026-05-28").
+# `warn` (not `deny`) so existing call sites compile; new code reviewed
+# at clippy time. Per-crate override via `#[allow(clippy::unwrap_used)]`.
+[workspace.lints.clippy]
+unwrap_used    = "warn"
+expect_used    = "warn"
+panic          = "warn"
+todo           = "warn"
+unimplemented  = "warn"
+unreachable    = "warn"
+dbg_macro      = "warn"
+print_stdout   = "allow"   # CLI tools legitimately print to stdout
+print_stderr   = "allow"   # error reporting via eprintln is the norm
+
 [workspace.dependencies]
 clap = { version = "4", features = ["derive", "env"] }
 serde = { version = "1", features = ["derive"] }
