@@ -19,7 +19,13 @@ fn write_fake_binary(bin_dir: &Path, crate_name: &str) {
     fs::create_dir_all(bin_dir).unwrap();
     let path = bin_dir.join(crate_name);
     // The fake binary echoes a fixed JSON object regardless of args/stdin.
-    let script = "#!/bin/sh\necho '{\"echoed\":true,\"verb_seen\":\"'\"$2\"'\"}'\n";
+    // CRITICAL (CI fix 2026-05-28): `cat >/dev/null` drains stdin before the
+    // echo. Without it, the dispatcher's `write_args_to_stdin` races with the
+    // child's exit: on Linux the script exits too fast → write() returns
+    // EPIPE → dispatch errors with "Broken pipe" → test fails. On macOS the
+    // race happens to favour the parent (pipe buffer + scheduler). The drain
+    // is what production binaries do anyway (they parse args from stdin).
+    let script = "#!/bin/sh\ncat >/dev/null\necho '{\"echoed\":true,\"verb_seen\":\"'\"$2\"'\"}'\n";
     fs::write(&path, script).unwrap();
     let mut perms = fs::metadata(&path).unwrap().permissions();
     perms.set_mode(0o755);
