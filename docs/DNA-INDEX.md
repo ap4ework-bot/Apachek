@@ -1,5 +1,10 @@
 # KeiSeiKit DNA Encyclopedia
 
+> **Note (2026-05-30):** the site-building cluster (frontend-design, landing-page, site-builder, site-create, site-teardown, figma-to-code, design-system, web-deploy, web-assets, web-effects, share-page, responsive-audit, a11y-audit, seo-audit, ui-component, form-builder, visual-loop) plus the supporting primitives (mock-render, visual-diff, tokens-sync, design-scrape, live-preview, figma-tokens, frontend-inspect, screenshot-decode) and the frontend-validator agent have been extracted to the private repo `KeiSeiLab/frontend-studio`. References below may still mention them historically. The generic image / video / 3D / animation skills (nano-banana, video-gen, animate, motion-design, scroll-animation, 3d-scene, visual-explainer, design-inspiration, playwright-cli) remain shipped here.
+
+---
+
+
 > Auto-generated from kei-registry. Last regenerated: 2026-05-14T04:37:36Z.
 > Total blocks: 679. Per-type breakdown:
 

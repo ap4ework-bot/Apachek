@@ -18,7 +18,13 @@
 [profile]
 minimal = []
 core    = ["tomd", "kei-doctor"]
-frontend = ["mock-render", "visual-diff", "tokens-sync", "design-scrape", "live-preview", "figma-tokens", "frontend-inspect", "screenshot-decode"]
+# `frontend` profile EXTRACTED 2026-05-30 to KeiSeiLab/frontend-studio (private).
+# The site-building cluster is no longer shipped from the public KSK. The
+# generic image / video / 3D / animation skills (nano-banana, video-gen,
+# animate, motion-design, scroll-animation, 3d-scene, visual-explainer,
+# design-inspiration, playwright-cli) remain available via the `core` /
+# `dev` profiles. Users wanting the full site pipeline should install
+# frontend-studio separately.
 ops     = ["kei-ledger", "ssh-check", "firewall-diff", "provision-hetzner", "provision-vultr", "harden-base", "metrics-scrape", "log-ship", "kei-provision"]
 dev     = ["kei-migrate", "kei-changelog", "kei-ci-lint", "kei-docs-scaffold", "kei-memory", "kei-conflict-scan", "kei-refactor-engine", "kei-graph-check", "kei-store", "kei-artifact", "kei-agent-runtime", "kei-capability", "kei-entity-store", "kei-pipe", "kei-cache", "kei-spawn", "kei-replay"]
 mcp     = ["kei-router", "kei-sage", "kei-task", "kei-chat-store", "kei-crossdomain", "kei-search-core", "kei-content-store", "kei-social-store", "kei-curator", "kei-auth"]
@@ -37,7 +43,7 @@ buddy   = ["kei-buddy", "kei-telegram-webhook", "kei-shared", "kei-chat-store", 
 local-mirror = ["kei-cortex", "kei-pet", "kei-shared", "kei-ledger", "kei-memory", "frustration-matrix", "kei-skill-importer", "kei-router", "kei-dna-index", "kei-atom-discovery", "dev-hub-forgejo", "dev-hub-forgejo-runner"]
 dashboard    = ["kei-cortex", "kei-pet", "kei-shared", "kei-ledger", "kei-memory", "frustration-matrix", "kei-skill-importer", "kei-router", "kei-dna-index", "kei-atom-discovery", "dev-hub-forgejo", "dev-hub-forgejo-runner", "kei-projects-index", "kei-projects-watcher", "dev-hub-datasette"]
 full-hub     = ["kei-cortex", "kei-pet", "kei-shared", "kei-ledger", "kei-memory", "frustration-matrix", "kei-skill-importer", "kei-router", "kei-dna-index", "kei-atom-discovery", "dev-hub-forgejo", "dev-hub-forgejo-runner", "kei-projects-index", "kei-projects-watcher", "dev-hub-datasette", "dev-hub-zoekt", "dev-hub-mdbook", "dev-hub-restic", "dev-hub-gdrive-import"]
-full    = ["tomd", "kei-doctor", "kei-ledger", "kei-migrate", "kei-changelog", "ssh-check", "firewall-diff", "mock-render", "visual-diff", "tokens-sync", "design-scrape", "live-preview", "figma-tokens", "frontend-inspect", "screenshot-decode", "provision-hetzner", "provision-vultr", "harden-base", "metrics-scrape", "log-ship", "kei-ci-lint", "kei-docs-scaffold", "kei-memory", "kei-conflict-scan", "kei-refactor-engine", "kei-graph-check", "kei-store", "kei-router", "kei-sage", "kei-task", "kei-chat-store", "kei-crossdomain", "kei-search-core", "kei-content-store", "kei-social-store", "kei-curator", "kei-auth", "kei-artifact", "keisei", "kei-agent-runtime", "kei-capability", "kei-provision", "kei-entity-store", "kei-pipe", "kei-cache", "kei-spawn", "kei-replay", "kei-cortex", "kei-pet", "kei-shared", "frustration-matrix", "kei-skill-importer", "kei-projects-index", "kei-projects-watcher", "dev-hub-forgejo", "dev-hub-forgejo-runner", "dev-hub-datasette", "dev-hub-zoekt", "dev-hub-mdbook", "dev-hub-restic", "dev-hub-gdrive-import"]
+full    = ["tomd", "kei-doctor", "kei-ledger", "kei-migrate", "kei-changelog", "ssh-check", "firewall-diff", "provision-hetzner", "provision-vultr", "harden-base", "metrics-scrape", "log-ship", "kei-ci-lint", "kei-docs-scaffold", "kei-memory", "kei-conflict-scan", "kei-refactor-engine", "kei-graph-check", "kei-store", "kei-router", "kei-sage", "kei-task", "kei-chat-store", "kei-crossdomain", "kei-search-core", "kei-content-store", "kei-social-store", "kei-curator", "kei-auth", "kei-artifact", "keisei", "kei-agent-runtime", "kei-capability", "kei-provision", "kei-entity-store", "kei-pipe", "kei-cache", "kei-spawn", "kei-replay", "kei-cortex", "kei-pet", "kei-shared", "frustration-matrix", "kei-skill-importer", "kei-projects-index", "kei-projects-watcher", "dev-hub-forgejo", "dev-hub-forgejo-runner", "dev-hub-datasette", "dev-hub-zoekt", "dev-hub-mdbook", "dev-hub-restic", "dev-hub-gdrive-import"]
 
 # --- shell primitives (13) -------------------------------------------------
 
@@ -53,35 +59,9 @@ file = "kei-doctor.sh"
 deps = []
 desc = "Substrate health check + PATH diagnostic; --fix attempts repair"
 
-[primitive.design-scrape]
-kind = "shell"
-file = "design-scrape.sh"
-deps = ["jq", "npx (Node)", "playwright (`npx playwright install chromium`)"]
-desc = "Live URL → design tokens + screenshots JSON via Playwright"
-
-[primitive.live-preview]
-kind = "shell"
-file = "live-preview.sh"
-deps = ["npm"]
-desc = "start/stop/status wrapper for a project's dev server (.keisei/dev-server.pid)"
-
-[primitive.figma-tokens]
-kind = "shell"
-file = "figma-tokens.sh"
-deps = ["curl", "jq", "FIGMA_TOKEN env var"]
-desc = "Figma API → design tokens JSON (consumed by tokens-sync)"
-
-[primitive.frontend-inspect]
-kind = "shell"
-file = "frontend-inspect.sh"
-deps = ["jq"]
-desc = "Scan project dir → report framework, styling, UI count, lockfile"
-
-[primitive.screenshot-decode]
-kind = "shell"
-file = "screenshot-decode.sh"
-deps = ["curl", "jq", "base64", "ANTHROPIC_API_KEY env var"]
-desc = "Screenshot → structured design description via Claude vision API"
+# 5 frontend-tooling shell primitives EXTRACTED 2026-05-30 → KeiSeiLab/frontend-studio:
+#   design-scrape, live-preview, figma-tokens, frontend-inspect, screenshot-decode.
+# They belonged to the site-building cluster and are no longer shipped here.
 
 [primitive.harden-base]
 kind = "shell"
@@ -157,23 +137,9 @@ crate = "firewall-diff"
 deps = ["ufw (target-side; binary parses `ufw status` output)"]
 desc = "ufw intended-vs-running diff — catches drift between declared and live rules"
 
-[primitive.mock-render]
-kind = "rust"
-crate = "mock-render"
-deps = ["Chrome/Chromium (runtime)", "playwright (optional for parity driver)"]
-desc = "Playwright wrapper with SHA-locked PNG (WYSIWYD: What You See Is What You Deploy)"
-
-[primitive.visual-diff]
-kind = "rust"
-crate = "visual-diff"
-deps = []
-desc = "Pixel diff with tolerance — used in /site-create screenshot-regression loop"
-
-[primitive.tokens-sync]
-kind = "rust"
-crate = "tokens-sync"
-deps = []
-desc = "Design tokens JSON → Tailwind config extend + CSS variables under :root"
+# 3 frontend-tooling rust primitives EXTRACTED 2026-05-30 → KeiSeiLab/frontend-studio:
+#   mock-render, visual-diff, tokens-sync. They were the WYSIWYD enforcement +
+#   design-token pipeline for /site-create and are no longer shipped here.
 
 [primitive.kei-memory]
 kind = "rust"

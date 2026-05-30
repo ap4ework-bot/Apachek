@@ -355,29 +355,20 @@ The `kei-import` umbrella runs the same pipeline (decompose → match
 → extract-skills → plan → execute) on any Rust / TS / Python / Go
 repo. Hermes was the validation case; the runtime works on others.
 
-## Frontend design — anti-AI-slop philosophy
+## Frontend / site-building cluster — extracted
 
-The `frontend-design` skill is a deliberate counter-position to the
-same-shape output of v0 / Lovable / Bolt:
+The site-building pipeline (17 skills + 8 primitives + the frontend-validator
+agent) was extracted to a separate private repo on 2026-05-30 for SaaS
+productisation. KeiSeiKit public retains only the generic visual primitives:
+`nano-banana` (AI image gen), `video-gen`, `animate`, `motion-design`,
+`scroll-animation`, `3d-scene`, `visual-explainer`, `design-inspiration`,
+`playwright-cli`.
 
-- **10 archetypes** — Editorial / Swiss / Brutalist / Minimal /
-  Maximalist / Retro-Futuristic / Organic / Industrial / Art Deco /
-  Lo-Fi. Each declares typography pairing + color palette + layout
-  language + motion style.
-- **OKLCH color system** — one `--brand-hue` controls the full palette,
-  perceptually uniform.
-- **Phase Gate (mandatory before any code):** purpose, archetype, the
-  one differentiator, three anti-references, design tokens. Skip the
-  gate = skip the skill.
-- **Hard bans:** Inter / Roboto / Space Grotesk, purple gradients on
-  white, centered card grids as default, hero → cards → testimonials
-  template, `linear` easing on UI transitions.
-- **Diverge-Kill-Mutate** loop when output feels generic.
-- **The Blur Test:** at 20% visibility, layout silhouette must be
-  distinguishable from anti-references.
-
-Orchestrator skill `landing-page` composes 11 skills across 6 recipes
-(apple-product / saas / portfolio / ecommerce / agency / startup).
+The extracted cluster includes the WYSIWYD mock-render → deploy invariant,
+`/site-create` end-to-end pipeline, anti-AI-slop design philosophy, design
+tokens, Figma import, and the audit triad (a11y / SEO / responsive). It
+lives at `KeiSeiLab/frontend-studio` (private) and may surface later as a
+hosted SaaS.
 
 ## Architecture
 
