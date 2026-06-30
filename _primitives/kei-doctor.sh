@@ -121,6 +121,7 @@ _section "secrets ($SECRETS_FILE)"
 check_env_var ANTHROPIC_API_KEY "$SECRETS_FILE"
 check_env_var ELEVEN_API_KEY    "$SECRETS_FILE"
 check_env_var FAL_API_KEY       "$SECRETS_FILE"
+check_env_var ZAI_API_KEY       "$SECRETS_FILE"   # Z.ai GLM backend (optional)
 
 echo
 if [ "$FAIL_COUNT" -eq 0 ]; then

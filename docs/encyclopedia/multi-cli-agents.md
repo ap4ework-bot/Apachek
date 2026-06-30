@@ -22,8 +22,57 @@ kei run-via <backend> <name> "<task>"    # explicit backend (no DNA lookup)
 | copilot  | `copilot` | `--prompt`   | ✅    | GitHub Copilot CLI (`@github/copilot`) |
 | kimi     | `kimi`    | TUI-only     | ⚠     | No print mode — launcher saves prompt to tmpfile + opens TUI for paste. `kimi acp` JSON-RPC integration is future work. |
 | codex    | `codex`   | `-p`         | —     | OpenAI Codex (register-only; not installed locally) |
+| glm      | `claude`  | `-p`         | ✅    | Z.ai GLM-5.2 via Anthropic-compatible endpoint; wraps the `claude` binary + `ZAI_API_KEY` (smoke 2026-06-30). See [GLM (Z.ai) backend](#glm-zai-backend) below. |
 
 Run `kei run-via list` to see installed backends, current primary, and agent names.
+
+## GLM (Z.ai) backend
+
+`glm` is special: it does **not** ship its own CLI. Z.ai's GLM Coding Plan
+exposes an **Anthropic-compatible** endpoint, so the backend reuses the
+`claude` binary and just points it at Z.ai via env vars. It is the actual
+Claude Code process (not a foreign CLI) — only the model behind the API
+differs.
+
+**Setup** — drop your key in `~/.claude/secrets/.env` (RULE 0.8), the launcher
+sources it automatically:
+
+```bash
+echo 'ZAI_API_KEY=...' >> ~/.claude/secrets/.env && chmod 600 ~/.claude/secrets/.env
+```
+
+**Usage:**
+
+```bash
+kei agent --on=glm critic "review src/auth.rs"   # one agent on GLM
+kei primary glm                                   # all agents + bare `kei` default to GLM
+kei primary claude                                # back to Anthropic
+```
+
+**Env knobs** (all optional):
+
+| Var | Default | Purpose |
+|---|---|---|
+| `ZAI_API_KEY` | — (required) | Z.ai key → `ANTHROPIC_AUTH_TOKEN` |
+| `ZAI_MODEL` | `glm-5.2` | maps to Opus + Sonnet slots |
+| `ZAI_SMALL_MODEL` | `glm-5-turbo` | maps to the Haiku slot |
+| `ZAI_BASE_URL` | `https://api.z.ai/api/anthropic` | endpoint override |
+
+The env is injected only into the exec'd subprocess — your real Anthropic
+`claude` backend is untouched. The glm arm forces `claude --strict-mcp-config`
+because loading the full MCP fleet in a `-p` subprocess otherwise hangs the
+launch (~60 s); the trade-off is that the GLM sub-session does not see
+`kei-mcp` / `spawn_agent` (the standard agent roster declares no MCP tools, so
+this is harmless in practice).
+
+**Default routing (DNA).** Read-only analysis agents (`critic*`, `architect`,
+`researcher-code`) and coding agents (`code-implementer*`) ship with
+`provider = "glm"` in their manifests, so they resolve to GLM without `--on=glm`.
+High-stakes judgement gates and write/deploy agents (`validator*`,
+`security-auditor*`, `cost-guardian`, `ml-*`, `modal-runner`, `infra-*`,
+`researcher`) deliberately stay on `claude` — reserve the top-tier Anthropic
+model for verdicts where being wrong is expensive. Override either way per call
+with `--on=`.
 
 ## DNA — agent prefers a provider
 
