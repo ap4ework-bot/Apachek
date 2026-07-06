@@ -4,7 +4,13 @@ All notable changes are tagged via `git tag v*`. Latest entries first.
 
 ## Unreleased
 
-(none — v0.63.0 just shipped)
+- **self-audit codify quality gate (RULE 0.14-Q)** — Phase-4 `codify` /
+  `create hook` routes now must carry a when-NOT-to-apply clause + a
+  verification criterion, and match rigidity to finding severity
+  (critical→block … low→note) before the `/escalate-recurrence` handoff
+  (new `skills/self-audit/codify-quality-gate.md`). Adds a "When NOT to
+  use" section to the skill. Method adapted from Trail of Bits
+  `skills-curated/skill-extractor` quality guide. (`ee40c43`)
 
 ---
 
