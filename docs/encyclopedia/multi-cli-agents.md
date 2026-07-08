@@ -41,6 +41,17 @@ sources it automatically:
 echo 'ZAI_API_KEY=...' >> ~/.claude/secrets/.env && chmod 600 ~/.claude/secrets/.env
 ```
 
+> **Optional, manual add-on.** The installer does **not** auto-configure GLM —
+> it is not offered in onboarding, so a fresh install stays on Anthropic
+> `claude` until you add the key above (only you ever touch the key; it never
+> lives in the repo). What *does* ship by default with the launcher on every
+> install: the **quota fail-fast guard** (a spent Z.ai weekly/monthly cap
+> returns HTTP 429, which the `claude` binary otherwise retries for ~180 s with
+> 0 tokens — the guard fails such calls in <1 s instead) and the **`kei
+> glm-quota`** status command. Both stay dormant until `ZAI_API_KEY` is set.
+> Toggle the preflight probe with `KEI_GLM_PREFLIGHT=0`; force a retry past a
+> quota block with `KEI_GLM_IGNORE_QUOTA=1`.
+
 **Usage:**
 
 ```bash
