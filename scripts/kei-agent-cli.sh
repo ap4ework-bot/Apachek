@@ -167,6 +167,41 @@ _glm_quota_mark_from() {
   return 0
 }
 
+# Cheap preflight so a FRESH exhaustion fails fast on ANY path — including the
+# MCP spawn_agent 60s cap (kill_on_drop=true), which kills the launcher before
+# the post-call detector above can run, so that path can't self-mark on its own.
+# The probe is gated by a short-TTL "healthy" cache that every successful real
+# call refreshes → during active healthy use it spends ~0 extra prompts (the
+# cache is fresh, so the probe is skipped). Rejected the naive per-call probe
+# for exactly that reason. Returns 1 (blocked) only on a confirmed 429.
+_glm_quota_ok_cache() { printf '%s' "${KEI_GLM_QUOTA_OK_CACHE:-$HOME/.claude/.glm-quota-ok}"; }
+
+_glm_quota_preflight() {
+  [ "${KEI_GLM_PREFLIGHT:-1}" = "1" ] || return 0
+  command -v curl >/dev/null 2>&1 || return 0
+  local ok ttl now age
+  ok=$(_glm_quota_ok_cache); ttl="${KEI_GLM_PREFLIGHT_TTL:-300}"; now=$(date -u +%s)
+  if [ -f "$ok" ]; then
+    age=$(( now - $(stat -c %Y "$ok" 2>/dev/null || echo 0) ))
+    [ "$age" -lt "$ttl" ] && return 0     # recently confirmed healthy → no probe
+  fi
+  local base model body http payload
+  base="${ZAI_BASE_URL:-https://api.z.ai/api/anthropic}"; model="${ZAI_MODEL:-glm-5.2}"
+  body=$(curl -sS --max-time "${KEI_GLM_PREFLIGHT_TIMEOUT:-12}" -w '\n%{http_code}' \
+    "$base/v1/messages" \
+    -H 'content-type: application/json' -H 'anthropic-version: 2023-06-01' \
+    -H "Authorization: Bearer ${ZAI_API_KEY}" \
+    -d "{\"model\":\"$model\",\"max_tokens\":1,\"messages\":[{\"role\":\"user\",\"content\":\"ping\"}]}" \
+    2>/dev/null) || return 0              # network hiccup → don't false-block
+  http=$(printf '%s' "$body" | tail -n1)
+  payload=$(printf '%s' "$body" | sed '$d')
+  case "$http" in
+    429) _glm_quota_mark_from "$payload" || true; return 1 ;;   # exhausted → marked
+    200) : > "$ok" 2>/dev/null || true; return 0 ;;             # healthy → refresh cache
+    *)   return 0 ;;                                            # unknown → proceed
+  esac
+}
+
 # ---- backend invocation ---------------------------------------------------
 backend_invoke() {
   local backend="$1" prompt="$2" agent_name="${3:-}" bin
@@ -220,6 +255,15 @@ backend_invoke() {
           printf '  Force a GLM retry anyway: KEI_GLM_IGNORE_QUOTA=1\n' >&2
           return 4
         fi
+        # No marker yet — cheap preflight so a fresh 429 fails fast even under
+        # the MCP 60s cap (which kills before the post-call detector runs).
+        if ! _glm_quota_preflight; then
+          local _pf; _pf=$(_glm_quota_blocked || printf 'reset pending')
+          printf '[kei-agent-cli] GLM quota exhausted (preflight 429) — unavailable until %s.\n' "$_pf" >&2
+          printf '  Reroute this agent to Opus:\n    kei agent --on=claude %s "<task>"\n' "${agent_name:-<agent>}" >&2
+          printf '  Force a GLM retry anyway: KEI_GLM_IGNORE_QUOTA=1\n' >&2
+          return 4
+        fi
       fi
       # Ledger mode (default on; disable with KEI_GLM_LEDGER=0). Runs the call
       # with --output-format=json to capture the REAL per-run token usage that
@@ -243,6 +287,8 @@ backend_invoke() {
         # fast-fail so the next call doesn't burn another ~180s retry loop.
         if _glm_quota_mark_from "$_out"; then
           printf '[kei-agent-cli] Z.ai 429 (quota exhausted) — marked; further GLM calls fail fast until reset. Reroute: kei agent --on=claude %s\n' "${agent_name:-<agent>}" >&2
+        elif [ -n "$_out" ]; then
+          : > "$(_glm_quota_ok_cache)" 2>/dev/null || true   # not rate-limited → refresh healthy cache (skips next preflight)
         fi
         if printf '%s' "$_out" | jq -e . >/dev/null 2>&1; then
           local _ledger="${KEI_GLM_LEDGER_FILE:-$HOME/.claude/glm-ledger.jsonl}"

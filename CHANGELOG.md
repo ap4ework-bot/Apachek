@@ -18,6 +18,15 @@ All notable changes are tagged via `git tag v*`. Latest entries first.
   (free) or `--live` (one probe). Detection signatures verified against the
   real Z.ai body *and* the `claude`-binary JSON. Smoke: fast-fail `exit 4` in
   0.04s (was ~180s), self-heal, `glm-quota → BLOCKED`.
+- **MCP `spawn_agent` covered too (no recompile)** — `invoke_spawn_agent`
+  shells the same `kei-agent-cli.sh`, so it inherits the fast-fail; but its
+  `kill_on_drop` + 60s cap means a *first* exhaustion arriving via MCP dies
+  before the post-call detector can self-mark. Closed with a preflight probe
+  gated by a short-TTL healthy cache (`~/.claude/.glm-quota-ok`, refreshed by
+  every real success) — probes ~0 times during active healthy use, but fails a
+  fresh 429 fast on any path within the 60s cap. Toggle `KEI_GLM_PREFLIGHT=0`.
+  Smoke: no-marker `kei agent --on=glm` → preflight 429 → re-mark → exit 4 in
+  0.60s; `mcp__kei__spawn_agent(critic)` → error in <1s (was 60s timeout).
 
 ---
 
