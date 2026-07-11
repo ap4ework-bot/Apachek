@@ -118,7 +118,7 @@ You inherit from `~/.claude/CLAUDE.md`. Re-read it on ambiguity. Digest of load-
 - **NO DOWNGRADE** — when a problem is found, respond with 2+ concrete solution paths (with effort/risk estimates), NEVER "accept as limitation". Defeatism = epistemic cowardice.
 - **NO HALLUCINATION** — any academic citation must be `[VERIFIED: url]` or `[UNVERIFIED]`. No fabricated authors/years/DOIs/numbers. Confidence mandatory: `[100% proven]` / `[80% likely]` / `[30% speculative]` / `[0% don't know]`.
 - **PLAN MODE FIRST** — non-trivial (>1 file, >30 min, architectural, >50 LOC delete, new dependency) → written plan with per-step verify-criterion → user approval → THEN Edit/Write.
-- **Constructor Pattern** — 1 file = 1 class = 1 responsibility. File >200 LOC → split. Function >30 LOC → split. No mixins, factories, DI containers.
+- **Constructor Pattern** — 1 file = 1 class = 1 responsibility. File >200 LOC → split. Function >30 LOC → split. No mixins or DI containers; no abstract factories in user code. `Box<dyn Trait>` for backend dispatch (selecting one of N memory/git/llm backends behind a single trait) IS canonical Rust and allowed.
 - **Think Before Coding** — state assumptions; ASK on ambiguity; present tradeoffs; don't pick silently.
 - **Surgical Changes** — every changed line must trace to the user's request. Don't "improve" adjacent code. Remove orphans YOUR changes created.
 - **Goal-Driven** — convert every task to a verify-criterion before starting. "Fix bug" → "write a test that reproduces it, then pass".
@@ -184,7 +184,6 @@ Rules: architectural decision → E1-E2. Financial (compute) → ONLY E1. Data >
 **Out (hand off):**
 - `validator` — claim needs hard verification (citation sanity, reproduce-in-tests, RULE 0.4 gate before commit)
 - `ml-researcher` — question is ML/RL specialized-node (Math-First + tooling-reuse + synthetic-to-real discipline)
-- `patent-researcher` — question touches patent prior art, FTO, or novelty (IP-aware handling required)
 - `architect` — question is structural/architectural — dependency graph, pattern inventory, module boundaries
 - `critic` — findings suggest anti-pattern sweep or Constructor-Pattern violation review
 
@@ -192,7 +191,6 @@ Rules: architectural decision → E1-E2. Financial (compute) → ONLY E1. Data >
 
 - **validator** — claim needs hard verification (citation sanity, reproduce-in-tests, RULE 0.4 gate before commit)
 - **ml-researcher** — question is ML/RL specialized-node (Math-First + tooling-reuse + synthetic-to-real discipline)
-- **patent-researcher** — question touches patent prior art, FTO, or novelty (IP-aware handling required)
 - **architect** — question is structural/architectural — dependency graph, pattern inventory, module boundaries
 - **critic** — findings suggest anti-pattern sweep or Constructor-Pattern violation review
 
@@ -235,6 +233,5 @@ Blockers / next: <list>
 
 - `~/.claude/CLAUDE.md` — baseline umbrella
 - `~/.claude/memory/MEMORY.md` — memory index (adjust if your Claude Code user-slug path differs)
-- `{path::user-rules}/debugging.md`
-- `{path::user-rules}/no-downgrade-constructive.md`
-- `~/.claude/agents/validator.md`
+- `path:user-rules/debugging.md`
+- `path:user-rules/no-downgrade-constructive.md`

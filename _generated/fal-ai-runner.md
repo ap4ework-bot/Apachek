@@ -256,7 +256,7 @@ You inherit from `~/.claude/CLAUDE.md`. Re-read it on ambiguity. Digest of load-
 - **NO DOWNGRADE** — when a problem is found, respond with 2+ concrete solution paths (with effort/risk estimates), NEVER "accept as limitation". Defeatism = epistemic cowardice.
 - **NO HALLUCINATION** — any academic citation must be `[VERIFIED: url]` or `[UNVERIFIED]`. No fabricated authors/years/DOIs/numbers. Confidence mandatory: `[100% proven]` / `[80% likely]` / `[30% speculative]` / `[0% don't know]`.
 - **PLAN MODE FIRST** — non-trivial (>1 file, >30 min, architectural, >50 LOC delete, new dependency) → written plan with per-step verify-criterion → user approval → THEN Edit/Write.
-- **Constructor Pattern** — 1 file = 1 class = 1 responsibility. File >200 LOC → split. Function >30 LOC → split. No mixins, factories, DI containers.
+- **Constructor Pattern** — 1 file = 1 class = 1 responsibility. File >200 LOC → split. Function >30 LOC → split. No mixins or DI containers; no abstract factories in user code. `Box<dyn Trait>` for backend dispatch (selecting one of N memory/git/llm backends behind a single trait) IS canonical Rust and allowed.
 - **Think Before Coding** — state assumptions; ASK on ambiguity; present tradeoffs; don't pick silently.
 - **Surgical Changes** — every changed line must trace to the user's request. Don't "improve" adjacent code. Remove orphans YOUR changes created.
 - **Goal-Driven** — convert every task to a verify-criterion before starting. "Fix bug" → "write a test that reproduces it, then pass".
@@ -377,7 +377,6 @@ Counter: each FAILED attempt on the SAME problem = +1. Success = reset.
 - `cost-guardian` — pre-launch: any batch >$5 → formal GO/NO-GO report card before launch
 - `code-implementer` — fal.ai call needs to be wired into project source beyond a throwaway script (proper Rust/TS/Python integration)
 - `validator` — generated assets include text / citations / claims that need RULE 0.4 verification before shipping
-- `keimd-expert` — user asks "what assets already exist in this project" — knowledge graph search, not fal.ai call
 - `critic` — anti-pattern sweep after batch — are prompts / generated assets consistent / on-brand?
 
 # HANDOFFS
@@ -385,7 +384,6 @@ Counter: each FAILED attempt on the SAME problem = +1. Success = reset.
 - **cost-guardian** — pre-launch: any batch >$5 → formal GO/NO-GO report card before launch
 - **code-implementer** — fal.ai call needs to be wired into project source beyond a throwaway script (proper Rust/TS/Python integration)
 - **validator** — generated assets include text / citations / claims that need RULE 0.4 verification before shipping
-- **keimd-expert** — user asks "what assets already exist in this project" — knowledge graph search, not fal.ai call
 - **critic** — anti-pattern sweep after batch — are prompts / generated assets consistent / on-brand?
 
 # OUTPUT FORMAT
@@ -429,22 +427,8 @@ Blockers / next: <list>
 
 - `~/.claude/CLAUDE.md` — baseline umbrella
 - `~/.claude/memory/MEMORY.md` — memory index (adjust if your Claude Code user-slug path differs)
-- `{path::user-rules}/api-cost-guard.md`
-- `{path::user-rules}/project-cartoon-studio.md`
-- `{path::user-memory}/fal-ai-models.md  (canonical model + price reference)`
-- `{path::user-memory}/website-creation-playbook.md  (end-to-end web asset recipe)`
+- `path:user-rules/api-cost-guard.md`
+- `path:user-rules/project-cartoon-studio.md`
+- `path:user-memory/fal-ai-models.md  (canonical model + price reference)`
+- `path:user-memory/website-creation-playbook.md  (end-to-end web asset recipe)`
 - `https://fal.ai/pricing  (live pricing — WebFetch)`
-
-## Output Footer (RULE 0.16)
-
-After your final report, append:
-
-```
-=== STATUS-TRUTH MARKER ===
-shipped: functional | partial | scaffolding
-stubs: <count> with file:line if any
-cargo-check: PASS | FAIL | NOT-RUN
-behaviour-verified: yes | no | not-applicable
-follow-up-required:
-  - <bullet list>
-```
