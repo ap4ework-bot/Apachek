@@ -227,3 +227,82 @@ fn main() -> ExitCode {
         _ => usage(),
     }
 }
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn epoch_zero_is_1970_01_01() {
+        assert_eq!(epoch_to_ymd_hms(0), (1970, 1, 1, 0, 0, 0));
+    }
+
+    #[test]
+    fn epoch_one_day_advances_date_not_time() {
+        assert_eq!(epoch_to_ymd_hms(86400), (1970, 1, 2, 0, 0, 0));
+    }
+
+    #[test]
+    fn epoch_mid_2023_with_time_of_day() {
+        // 1700000000 == 2023-11-14T22:13:20Z (verified against a reference
+        // UTC converter).
+        assert_eq!(epoch_to_ymd_hms(1_700_000_000), (2023, 11, 14, 22, 13, 20));
+    }
+
+    #[test]
+    fn century_leap_year_2000_02_29_exists() {
+        // 2000 is a leap year despite being divisible by 100, because it's
+        // also divisible by 400 — the classic Gregorian edge case.
+        assert_eq!(epoch_to_ymd_hms(951_782_400), (2000, 2, 29, 0, 0, 0));
+    }
+
+    #[test]
+    fn near_future_leap_day_2024_04_02() {
+        assert_eq!(epoch_to_ymd_hms(1_712_016_000), (2024, 4, 2, 0, 0, 0));
+    }
+
+    #[test]
+    fn year_days_leap_rules() {
+        assert_eq!(year_days(1970), 365, "not divisible by 4");
+        assert_eq!(year_days(2024), 366, "divisible by 4, not by 100");
+        assert_eq!(year_days(1900), 365, "divisible by 100, not by 400");
+        assert_eq!(year_days(2000), 366, "divisible by 400");
+    }
+
+    #[test]
+    fn month_days_february_matches_leap_status() {
+        assert_eq!(month_days(2024)[1], 29);
+        assert_eq!(month_days(2023)[1], 28);
+        assert_eq!(month_days(1900)[1], 28);
+        assert_eq!(month_days(2000)[1], 29);
+    }
+
+    #[test]
+    fn start_then_stop_round_trips_through_journal() {
+        let dir = std::env::temp_dir().join(format!("kei-tlog-test-{}", now_epoch()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let journal = dir.join("tasks.jsonl");
+        // SAFETY: this is the only test in this crate that touches
+        // KEI_TLOG_JOURNAL, so there's no cross-test race on the env var.
+        unsafe {
+            std::env::set_var("KEI_TLOG_JOURNAL", &journal);
+        }
+
+        let name = "unit-test-task";
+        let start = now_epoch();
+        let line = serde_json::json!({
+            "kind": "start", "name": name, "start_epoch": start, "ts": iso_now(),
+        })
+        .to_string();
+        append_line(&line).unwrap();
+
+        assert_eq!(last_start_epoch_for(name), Some(start));
+        assert_eq!(last_start_epoch_for("some-other-task"), None);
+
+        unsafe {
+            std::env::remove_var("KEI_TLOG_JOURNAL");
+        }
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+}

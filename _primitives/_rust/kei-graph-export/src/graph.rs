@@ -67,3 +67,64 @@ fn default_colors() -> HashMap<String, String> {
     .map(|(k, v)| (k.to_string(), v.to_string()))
     .collect()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn node(id: &str) -> Node {
+        Node {
+            id: id.to_string(),
+            title: id.to_string(),
+            kind: "atom".to_string(),
+            category: "atom".to_string(),
+            tags: Vec::new(),
+            connections: 0,
+            extra: HashMap::new(),
+        }
+    }
+
+    fn edge(src: &str, tgt: &str) -> Edge {
+        Edge {
+            source: src.to_string(),
+            target: tgt.to_string(),
+            kind: "block_dep".to_string(),
+            weight: 1.0,
+        }
+    }
+
+    #[test]
+    fn compute_connections_counts_both_endpoints() {
+        let mut nodes = vec![node("a"), node("b"), node("c")];
+        let links = vec![edge("a", "b"), edge("a", "c")];
+        compute_connections(&mut nodes, &links);
+        assert_eq!(nodes[0].connections, 2); // "a": source of both edges
+        assert_eq!(nodes[1].connections, 1); // "b": target of one
+        assert_eq!(nodes[2].connections, 1); // "c": target of one
+    }
+
+    #[test]
+    fn compute_connections_node_with_no_edges_stays_zero() {
+        let mut nodes = vec![node("isolated")];
+        let links: Vec<Edge> = Vec::new();
+        compute_connections(&mut nodes, &links);
+        assert_eq!(nodes[0].connections, 0);
+    }
+
+    #[test]
+    fn compute_connections_self_loop_counts_twice() {
+        let mut nodes = vec![node("a")];
+        let links = vec![edge("a", "a")];
+        compute_connections(&mut nodes, &links);
+        assert_eq!(nodes[0].connections, 2);
+    }
+
+    #[test]
+    fn default_colors_has_an_entry_for_every_node_kind() {
+        let colors = default_colors();
+        for kind in ["atom", "hook", "primitive", "rule", "skill", "agent", "branch", "manifest"] {
+            assert!(colors.contains_key(kind), "missing color for kind '{kind}'");
+        }
+        assert_eq!(colors.len(), 8);
+    }
+}

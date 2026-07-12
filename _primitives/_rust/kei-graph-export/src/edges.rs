@@ -138,3 +138,117 @@ fn edge(src: &str, tgt: &str, kind: &str, weight: f32) -> Edge {
         weight,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn strip_trailing_digits_and_dashes_strips_numeric_suffix() {
+        assert_eq!(strip_trailing_digits_and_dashes("code-implementer-42"), "code-implementer");
+        assert_eq!(strip_trailing_digits_and_dashes("researcher-7"), "researcher");
+    }
+
+    #[test]
+    fn strip_trailing_digits_and_dashes_no_suffix_is_unchanged() {
+        assert_eq!(strip_trailing_digits_and_dashes("plain-name"), "plain-name");
+    }
+
+    #[test]
+    fn strip_trailing_digits_and_dashes_all_digits_is_empty() {
+        assert_eq!(strip_trailing_digits_and_dashes("12345"), "");
+    }
+
+    #[test]
+    fn subagent_slug_takes_last_path_segment() {
+        assert_eq!(subagent_slug("agents/code-implementer-42"), "code-implementer");
+    }
+
+    #[test]
+    fn subagent_slug_strips_inline_prefix_after_digits() {
+        assert_eq!(subagent_slug("agents/inline-researcher-7"), "researcher");
+    }
+
+    #[test]
+    fn subagent_slug_no_path_separator_still_works() {
+        assert_eq!(subagent_slug("critic-3"), "critic");
+    }
+
+    #[test]
+    fn edges_manifest_block_links_known_names_skips_unknown() {
+        let manifests = vec![ManifestInfo {
+            node_id: "m1".into(),
+            name: "code-implementer".into(),
+            blocks: vec!["baseline".into(), "missing-block".into()],
+            path_refs: vec![],
+            rule_blocks: vec![],
+        }];
+        let mut lookup = HashMap::new();
+        lookup.insert("baseline".to_string(), "block::baseline".to_string());
+
+        let mut links = Vec::new();
+        edges_manifest_block(&manifests, &lookup, &mut links);
+
+        assert_eq!(links.len(), 1, "unknown block name should be silently skipped");
+        assert_eq!(links[0].source, "m1");
+        assert_eq!(links[0].target, "block::baseline");
+        assert_eq!(links[0].kind, "block_dep");
+    }
+
+    #[test]
+    fn edges_agent_fork_only_emits_edge_when_parent_present() {
+        let agents = vec![
+            AgentInfo { node_id: "a1".into(), branch: "b1".into(), fork_parent_id: Some("p1".into()) },
+            AgentInfo { node_id: "a2".into(), branch: "b2".into(), fork_parent_id: None },
+        ];
+        let mut links = Vec::new();
+        edges_agent_fork(&agents, &mut links);
+
+        assert_eq!(links.len(), 1);
+        assert_eq!(links[0].source, "p1");
+        assert_eq!(links[0].target, "a1");
+        assert_eq!(links[0].kind, "agent_fork");
+    }
+
+    #[test]
+    fn edges_agent_manifest_matches_by_derived_slug() {
+        let agents = vec![AgentInfo {
+            node_id: "a1".into(),
+            branch: "agents/code-implementer-42".into(),
+            fork_parent_id: None,
+        }];
+        let manifests = vec![ManifestInfo {
+            node_id: "m1".into(),
+            name: "code-implementer".into(),
+            blocks: vec![],
+            path_refs: vec![],
+            rule_blocks: vec![],
+        }];
+        let mut links = Vec::new();
+        edges_agent_manifest(&agents, &manifests, &mut links);
+
+        assert_eq!(links.len(), 1);
+        assert_eq!(links[0].source, "a1");
+        assert_eq!(links[0].target, "m1");
+        assert_eq!(links[0].kind, "agent_uses_manifest");
+    }
+
+    #[test]
+    fn edges_agent_manifest_no_match_emits_nothing() {
+        let agents = vec![AgentInfo {
+            node_id: "a1".into(),
+            branch: "agents/unknown-role-1".into(),
+            fork_parent_id: None,
+        }];
+        let manifests = vec![ManifestInfo {
+            node_id: "m1".into(),
+            name: "code-implementer".into(),
+            blocks: vec![],
+            path_refs: vec![],
+            rule_blocks: vec![],
+        }];
+        let mut links = Vec::new();
+        edges_agent_manifest(&agents, &manifests, &mut links);
+        assert!(links.is_empty());
+    }
+}

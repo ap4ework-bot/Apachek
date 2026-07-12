@@ -52,3 +52,61 @@ pub fn truncate_chars(s: &str, max: usize) -> &str {
     let end = s.char_indices().nth(max).map(|(i, _)| i).unwrap_or(s.len());
     &s[..end]
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn sanitize_id_keeps_allowed_chars() {
+        assert_eq!(sanitize_id("kei-fork::v1_2/test.md"), "kei-fork::v1_2/test.md");
+    }
+
+    #[test]
+    fn sanitize_id_replaces_disallowed_chars() {
+        assert_eq!(sanitize_id("hello world!"), "hello_world_");
+        assert_eq!(sanitize_id("a@b#c"), "a_b_c");
+    }
+
+    #[test]
+    fn sanitize_id_empty_string_is_empty() {
+        assert_eq!(sanitize_id(""), "");
+    }
+
+    #[test]
+    fn dna_prefix_truncates_then_sanitizes() {
+        let long = "a".repeat(40);
+        assert_eq!(dna_prefix(&long), "a".repeat(30));
+    }
+
+    #[test]
+    fn dna_prefix_sanitizes_after_truncating() {
+        // 30-char take happens first, then disallowed chars get replaced.
+        let s = format!("{}!!!!!", "x".repeat(30));
+        assert_eq!(dna_prefix(&s), "x".repeat(30));
+    }
+
+    #[test]
+    fn truncate_chars_shorter_than_max_is_unchanged() {
+        assert_eq!(truncate_chars("hi", 10), "hi");
+    }
+
+    #[test]
+    fn truncate_chars_exact_length_is_unchanged() {
+        assert_eq!(truncate_chars("hello", 5), "hello");
+    }
+
+    #[test]
+    fn truncate_chars_cuts_at_char_boundary_not_byte() {
+        // Each of these is a multi-byte UTF-8 char; a naive byte-slice
+        // truncation (&s[..max]) would panic mid-codepoint here.
+        let s = "日本語テスト";
+        assert_eq!(truncate_chars(s, 3), "日本語");
+        assert_eq!(s.chars().count(), 6);
+    }
+
+    #[test]
+    fn truncate_chars_max_zero_is_empty() {
+        assert_eq!(truncate_chars("anything", 0), "");
+    }
+}

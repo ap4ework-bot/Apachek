@@ -123,3 +123,98 @@ impl PingStore for SqlitePingStore {
         Ok(())
     }
 }
+
+#[cfg(test)]
+#[allow(clippy::unwrap_used)]
+mod tests {
+    use super::*;
+
+    /// Unique per-test tempfile path — tests run on parallel threads within
+    /// one process, so a counter (not just PID) is needed to avoid two
+    /// tests racing on the same SQLite file.
+    fn temp_db_path() -> PathBuf {
+        use std::sync::atomic::{AtomicU64, Ordering};
+        static COUNTER: AtomicU64 = AtomicU64::new(0);
+        let n = COUNTER.fetch_add(1, Ordering::Relaxed);
+        std::env::temp_dir().join(format!(
+            "kei-ping-test-{}-{n}.sqlite",
+            std::process::id()
+        ))
+    }
+
+    fn hb(agent_id: &str, phase: &str, last_seen_epoch: u64) -> Heartbeat {
+        Heartbeat {
+            agent_id: agent_id.into(),
+            session_id: None,
+            phase: phase.into(),
+            dna: None,
+            branch: None,
+            cwd: None,
+            last_seen_epoch,
+            note: None,
+        }
+    }
+
+    #[tokio::test]
+    async fn send_then_list_round_trips() {
+        let path = temp_db_path();
+        let store = SqlitePingStore::open(path.clone()).unwrap();
+        let now = now_epoch();
+        store.send(&hb("a1", "wave-7", now)).await.unwrap();
+
+        let out = store.list(&PingFilter::default()).await.unwrap();
+        assert_eq!(out.len(), 1);
+        assert_eq!(out[0].agent_id, "a1");
+        assert_eq!(out[0].phase, "wave-7");
+
+        let _ = std::fs::remove_file(&path);
+    }
+
+    #[tokio::test]
+    async fn send_upserts_on_same_agent_id() {
+        let path = temp_db_path();
+        let store = SqlitePingStore::open(path.clone()).unwrap();
+        let now = now_epoch();
+        store.send(&hb("a1", "wave-7", now)).await.unwrap();
+        store.send(&hb("a1", "wave-8", now)).await.unwrap();
+
+        let out = store.list(&PingFilter::default()).await.unwrap();
+        assert_eq!(out.len(), 1, "second send should update, not duplicate");
+        assert_eq!(out[0].phase, "wave-8");
+
+        let _ = std::fs::remove_file(&path);
+    }
+
+    #[tokio::test]
+    async fn list_filters_out_stale_heartbeats() {
+        let path = temp_db_path();
+        let store = SqlitePingStore::open(path.clone()).unwrap();
+        let now = now_epoch();
+        store.send(&hb("fresh", "p", now)).await.unwrap();
+        store.send(&hb("stale", "p", now.saturating_sub(200))).await.unwrap();
+
+        let f = PingFilter { max_age_s: Some(90), ..Default::default() };
+        let out = store.list(&f).await.unwrap();
+        assert_eq!(out.len(), 1);
+        assert_eq!(out[0].agent_id, "fresh");
+
+        let _ = std::fs::remove_file(&path);
+    }
+
+    #[tokio::test]
+    async fn clear_removes_only_the_named_agent() {
+        let path = temp_db_path();
+        let store = SqlitePingStore::open(path.clone()).unwrap();
+        let now = now_epoch();
+        store.send(&hb("a1", "p", now)).await.unwrap();
+        store.send(&hb("a2", "p", now)).await.unwrap();
+
+        store.clear("a1").await.unwrap();
+
+        let out = store.list(&PingFilter::default()).await.unwrap();
+        assert_eq!(out.len(), 1);
+        assert_eq!(out[0].agent_id, "a2");
+
+        let _ = std::fs::remove_file(&path);
+    }
+}
