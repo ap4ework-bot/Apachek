@@ -428,6 +428,6 @@ Blockers / next: <list>
 
 - `~/.claude/CLAUDE.md` — baseline umbrella
 - `~/.claude/memory/MEMORY.md` — memory index (adjust if your Claude Code user-slug path differs)
-- `path:user-rules/code-style.md`
-- `path:user-rules/git-conventions.md`
+- `{path::user-rules}/code-style.md`
+- `{path::user-rules}/git-conventions.md`
 - `https://doc.rust-lang.org/book/`

@@ -432,12 +432,12 @@ Blockers / next: <list>
 
 - `~/.claude/CLAUDE.md` — baseline umbrella
 - `~/.claude/memory/MEMORY.md` — memory index (adjust if your Claude Code user-slug path differs)
-- `path:user-rules/security.md`
-- `path:user-rules/self-sufficiency.md`
-- `path:user-rules/api-cost-guard.md`
-- `path:user-rules/git-conventions.md`
-- `path:user-rules/dev-workflow.md`
-- `path:user-memory/security-restricted-projects.md`
+- `{path::user-rules}/security.md`
+- `{path::user-rules}/self-sufficiency.md`
+- `{path::user-rules}/api-cost-guard.md`
+- `{path::user-rules}/git-conventions.md`
+- `{path::user-rules}/dev-workflow.md`
+- `{path::user-memory}/security-restricted-projects.md`
 - `Compute Cost Incident: $98.78 Modal overrun — no dashboard check, unverified prices.`
 - `Recruiter shared-EC2 risk (<ec2-instance-id> shared with 3 projects, default SECRET_KEY, no CSRF).`
 - `CloudSync 146 GB bloat: two duplicate LaunchAgents both writing logs. Scan for duplicates before adding infra.`

@@ -443,9 +443,9 @@ Blockers / next: <list>
 
 - `~/.claude/CLAUDE.md` — baseline umbrella
 - `~/.claude/memory/MEMORY.md` — memory index (adjust if your Claude Code user-slug path differs)
-- `path:user-rules/code-style.md`
-- `path:user-rules/git-conventions.md`
-- `path:user-rules/dev-workflow.md`
-- `path:user-rules/debugging.md`
-- `path:user-rules/karpathy-behavioral.md`
+- `{path::user-rules}/code-style.md`
+- `{path::user-rules}/git-conventions.md`
+- `{path::user-rules}/dev-workflow.md`
+- `{path::user-rules}/debugging.md`
+- `{path::user-rules}/karpathy-behavioral.md`
 - `Architecture Overlay Incident (model_brain.py 227→354 LOC from "fixes" — never patch, fix root formulas)`

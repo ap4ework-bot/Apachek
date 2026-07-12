@@ -262,9 +262,9 @@ Blockers / next: <list>
 
 - `~/.claude/CLAUDE.md` — baseline umbrella
 - `~/.claude/memory/MEMORY.md` — memory index (adjust if your Claude Code user-slug path differs)
-- `path:user-rules/ml-protocol.md`
-- `path:user-rules/cfc-specialized-nodes.md`
-- `path:user-rules/paradigm-native-measurement.md`
-- `path:user-rules/api-cost-guard.md`
-- `path:user-rules/no-downgrade-constructive.md`
-- `path:user-memory/wrong-paths-specialized-ml.md`
+- `{path::user-rules}/ml-protocol.md`
+- `{path::user-rules}/cfc-specialized-nodes.md`
+- `{path::user-rules}/paradigm-native-measurement.md`
+- `{path::user-rules}/api-cost-guard.md`
+- `{path::user-rules}/no-downgrade-constructive.md`
+- `{path::user-memory}/wrong-paths-specialized-ml.md`

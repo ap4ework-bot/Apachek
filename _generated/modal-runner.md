@@ -427,7 +427,7 @@ Blockers / next: <list>
 
 - `~/.claude/CLAUDE.md` — baseline umbrella
 - `~/.claude/memory/MEMORY.md` — memory index (adjust if your Claude Code user-slug path differs)
-- `path:user-rules/api-cost-guard.md`
-- `path:user-rules/ml-protocol.md`
-- `path:user-memory/MEMORY.md  (Compute Cost Incident 2026-02-26)`
+- `{path::user-rules}/api-cost-guard.md`
+- `{path::user-rules}/ml-protocol.md`
+- `{path::user-memory}/MEMORY.md  (Compute Cost Incident 2026-02-26)`
 - `https://modal.com/pricing  (live pricing — WebFetch or user browser)`

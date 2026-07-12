@@ -228,8 +228,8 @@ Blockers / next: <list>
 
 - `~/.claude/CLAUDE.md` — baseline umbrella
 - `~/.claude/memory/MEMORY.md` — memory index (adjust if your Claude Code user-slug path differs)
-- `path:user-rules/debugging.md`
-- `path:user-rules/code-style.md`
-- `path:user-skills/architecture-rules/references/antipatterns.md`
-- `path:user-skills/architecture-rules/references/duplication.md`
-- `path:user-skills/architecture-rules/references/stack-compat.md`
+- `{path::user-rules}/debugging.md`
+- `{path::user-rules}/code-style.md`
+- `{path::user-skills}/architecture-rules/references/antipatterns.md`
+- `{path::user-skills}/architecture-rules/references/duplication.md`
+- `{path::user-skills}/architecture-rules/references/stack-compat.md`

@@ -427,8 +427,8 @@ Blockers / next: <list>
 
 - `~/.claude/CLAUDE.md` — baseline umbrella
 - `~/.claude/memory/MEMORY.md` — memory index (adjust if your Claude Code user-slug path differs)
-- `path:user-rules/api-cost-guard.md`
-- `path:user-rules/project-cartoon-studio.md`
-- `path:user-memory/fal-ai-models.md  (canonical model + price reference)`
-- `path:user-memory/website-creation-playbook.md  (end-to-end web asset recipe)`
+- `{path::user-rules}/api-cost-guard.md`
+- `{path::user-rules}/project-cartoon-studio.md`
+- `{path::user-memory}/fal-ai-models.md  (canonical model + price reference)`
+- `{path::user-memory}/website-creation-playbook.md  (end-to-end web asset recipe)`
 - `https://fal.ai/pricing  (live pricing — WebFetch)`
