@@ -17,12 +17,10 @@ impl Scope {
     /// Admin ⊇ Write ⊇ Read.
     pub fn allows(&self, required: Scope) -> bool {
         use Scope::*;
-        match (self, required) {
-            (Admin, _) => true,
-            (Write, Read) | (Write, Write) => true,
-            (Read, Read) => true,
-            _ => false,
-        }
+        matches!(
+            (self, required),
+            (Admin, _) | (Write, Read) | (Write, Write) | (Read, Read)
+        )
     }
 }
 

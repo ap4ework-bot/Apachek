@@ -20,7 +20,7 @@ fn now_epoch() -> u64 {
         .unwrap_or(0)
 }
 
-fn pop_flag<'a>(args: &mut Vec<String>, name: &str) -> Option<String> {
+fn pop_flag(args: &mut Vec<String>, name: &str) -> Option<String> {
     if let Some(idx) = args.iter().position(|a| a == name) {
         if idx + 1 < args.len() {
             let v = args.remove(idx + 1);

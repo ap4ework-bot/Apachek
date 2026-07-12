@@ -5,7 +5,7 @@
 
 use crate::{analyze, dump, ingest, patterns, stats, tfidf};
 use rusqlite::Connection;
-use std::path::PathBuf;
+use std::path::Path;
 use std::process::ExitCode;
 
 fn err(msg: &str) -> ExitCode {
@@ -16,7 +16,7 @@ fn err(msg: &str) -> ExitCode {
 pub fn cmd_ingest(
     conn: &Connection,
     session_id: &str,
-    transcript: &PathBuf,
+    transcript: &Path,
     prompt: Option<String>,
 ) -> ExitCode {
     match ingest::ingest_jsonl(conn, session_id, transcript) {

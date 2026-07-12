@@ -23,7 +23,7 @@ const TOOL_RESP_CLOSE: &str = "</tool_response>";
 ///     value = INNER text only (Hermes spec: tool turns carry plain
 ///     payload, not wrapped XML);
 ///   - plain text between blocks → `From::Gpt` with that text verbatim.
-///   Whitespace-only segments are dropped.
+///     Whitespace-only segments are dropped.
 pub fn parse_chatlog_turns(text: &str) -> Vec<ShareGptMessage> {
     if !has_markers(text) {
         return legacy_single_turn(text);

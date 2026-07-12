@@ -18,6 +18,9 @@ pub struct SecretsReport {
     pub env_files: Vec<String>,
 }
 
+/// Per-key `(usage_count, sample_files)`, keyed by secret name.
+type UsageCounts = BTreeMap<String, (u64, Vec<String>)>;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct KeyRow {
     pub name: String,
@@ -69,12 +72,12 @@ fn word_re(key: &str) -> Result<Regex> {
 pub(crate) fn scan_usages(
     keys: &[String],
     scan_root: &Path,
-) -> Result<(u64, BTreeMap<String, (u64, Vec<String>)>)> {
+) -> Result<(u64, UsageCounts)> {
     let patterns: Vec<(String, Regex)> = keys
         .iter()
         .map(|k| Ok((k.clone(), word_re(k)?)))
         .collect::<Result<_>>()?;
-    let mut counts: BTreeMap<String, (u64, Vec<String>)> = BTreeMap::new();
+    let mut counts: UsageCounts = BTreeMap::new();
     for k in keys { counts.insert(k.clone(), (0, Vec::new())); }
     let mut scanned = 0u64;
     for entry in WalkDir::new(scan_root).follow_links(false)

@@ -12,8 +12,8 @@
 //!   * `session.rs`            in-memory session continuity store
 //!   * `run_registry.rs`       in-memory `/v1/runs` slot store
 //!   * `run_agent.rs`          real agent loop (P1.1.d) — drains
-//!                              `tool::LoopEvent` into `AgentChunk`s
-//!                              for the SSE handler in `runs.rs`
+//!     `tool::LoopEvent` into `AgentChunk`s
+//!     for the SSE handler in `runs.rs`
 //!   * `ids.rs`                prefixed-uuid id generators
 //!   * `models.rs`             GET /v1/models
 //!   * `chat_completions.rs`   POST /v1/chat/completions

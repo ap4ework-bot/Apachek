@@ -8,7 +8,7 @@
 //! through [`Runner`] for testability):
 //!
 //! * `configure`  → `swanctl --load-all` (refresh `/etc/swanctl/`),
-//!                  then `swanctl --initiate --child <child_name>`.
+//!   then `swanctl --initiate --child <child_name>`.
 //! * `teardown`   → `swanctl --terminate --child <child_name>`.
 //! * `peers`      → `swanctl --list-sas`, parsed by [`crate::parse`].
 //!

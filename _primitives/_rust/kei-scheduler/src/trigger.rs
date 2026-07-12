@@ -37,6 +37,9 @@ pub fn validate_kind(kind: &str) -> Result<&'static str, ParseError> {
 /// reference `from` timestamp. Returns `Ok(None)` when no future fire
 /// exists (e.g. `at` timestamp already in the past, or cron schedule
 /// with no upcoming occurrence in `chrono`'s representable range).
+// `validate_kind`'s `Ok` branch only ever returns CRON/AT/INTERVAL (see its
+// own match arms) — the `_` arm below is provably unreachable.
+#[allow(clippy::unreachable)]
 pub fn compute_next(
     kind: &str,
     spec: &str,

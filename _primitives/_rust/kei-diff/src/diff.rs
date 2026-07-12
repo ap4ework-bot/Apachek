@@ -95,11 +95,11 @@ fn emit_array_truncate(old_len: usize, new_len: usize, path: &mut PathBuf, patch
 // Append new tail. Emit in ascending order so each add references the
 // just-created length as the next insertion point.
 fn emit_array_append(b: &[Value], old_len: usize, path: &mut PathBuf, patch: &mut Patch) {
-    for i in old_len..b.len() {
+    for (i, v) in b.iter().enumerate().skip(old_len) {
         path.push_index(i);
         patch.push(Op::Add {
             path: path.as_string(),
-            value: b[i].clone(),
+            value: v.clone(),
         });
         path.pop();
     }

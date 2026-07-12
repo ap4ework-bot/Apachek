@@ -7,7 +7,7 @@
 //!   not a generic `list` with offset/limit.
 //! - `graph.rs::relationship_graph` runs `GROUP BY person_id,
 //!   target_id, channel` which is out of scope for engine verbs.
-//! Table DDL still lives in `SOCIAL_SCHEMA::custom_migrations`.
+//!   Table DDL still lives in `SOCIAL_SCHEMA::custom_migrations`.
 
 use crate::store::Store;
 use anyhow::Result;

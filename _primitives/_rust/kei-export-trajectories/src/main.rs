@@ -15,7 +15,7 @@ use kei_export_trajectories::{
     normalize_keys, record_to_trajectory, write_jsonl, LedgerReader, Trajectory,
 };
 use std::collections::BTreeSet;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 #[derive(Parser, Debug)]
 #[command(name = "kei-export-trajectories", version)]
@@ -62,7 +62,7 @@ fn main() -> Result<()> {
     }
 }
 
-fn run_export(cli: &Cli, from_ts: &str, output: &PathBuf) -> Result<()> {
+fn run_export(cli: &Cli, from_ts: &str, output: &Path) -> Result<()> {
     let reader = build_reader(cli);
     let records = reader.read_since(parse_iso(from_ts)?)?;
     let mut trajs: Vec<Trajectory> = records

@@ -31,11 +31,11 @@
 //! [`AuthChallenge::SshKeySig`] variant as the wire carrier:
 //!
 //! - `key_id`   — base64-encoded credential id (during `verify`), or
-//!                the literal string `"register"` / `"authenticate"`
-//!                (during `issue_challenge`).
+//!   the literal string `"register"` / `"authenticate"`
+//!   (during `issue_challenge`).
 //! - `signature`— base64-encoded JSON of the
-//!                [`RegisterPublicKeyCredential`] / [`PublicKeyCredential`]
-//!                returned by the browser ceremony.
+//!   [`RegisterPublicKeyCredential`] / [`PublicKeyCredential`]
+//!   returned by the browser ceremony.
 //!
 //! Because the WebAuthn ceremony state (`PasskeyRegistration` /
 //! `PasskeyAuthentication`) does not fit cleanly into the trait's

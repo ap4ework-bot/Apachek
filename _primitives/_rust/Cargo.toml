@@ -201,7 +201,11 @@ exclude = ["kei-model-router"]
 
 [workspace.package]
 edition = "2021"
-rust-version = "1.77"
+# v0.65: bumped 1.77 -> 1.89 (audit: 4 clippy::incompatible_msrv findings —
+# code already used Option::is_none_or (1.82) and File::lock_shared (1.89).
+# No CI job actually builds against 1.77 (ci.yml uses dtolnay@stable), so
+# the old value was aspirational/stale, not a tested constraint.
+rust-version = "1.89"
 authors = ["KeiSei LLC <hello@keilab.io>", "Denis Parfionovich <parfionovich@keilab.io>"]
 license = "Apache-2.0"
 repository = "https://github.com/KeiSeiLab/KeiSeiKit"

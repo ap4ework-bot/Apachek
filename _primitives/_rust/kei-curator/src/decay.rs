@@ -12,15 +12,16 @@ pub struct DecayReport {
     pub pruned: usize,
 }
 
+/// `(edge_id, new_weight)` pairs to update, and `edge_id`s to delete.
+type DecayPlan = (Vec<(i64, f64)>, Vec<i64>);
+
 pub fn decay_edges(conn: &Connection, cfg: &Config) -> Result<DecayReport> {
     let now = Utc::now().timestamp();
     let (updates, deletes) = compute_decay(conn, cfg, now)?;
     apply_decay(conn, &updates, &deletes)
 }
 
-fn compute_decay(conn: &Connection, cfg: &Config, now: i64)
-    -> Result<(Vec<(i64, f64)>, Vec<i64>)>
-{
+fn compute_decay(conn: &Connection, cfg: &Config, now: i64) -> Result<DecayPlan> {
     let mut stmt = conn.prepare("SELECT id, from_uri, weight, created_at FROM cross_edges")?;
     let rows = stmt.query_map([], |r| Ok((
         r.get::<_, i64>(0)?, r.get::<_, String>(1)?,

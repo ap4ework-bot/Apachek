@@ -99,6 +99,7 @@ pub(crate) fn describe_schedule(morning: Option<u8>, evening: Option<u8>, tz: &s
 // ─── topic finisher ───────────────────────────────────────────────────────────
 
 /// Save the completed topic record and advance to next topic or ask_schedule.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn finish_topic(
     persona: &Value,
     name: &str,

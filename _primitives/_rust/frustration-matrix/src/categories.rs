@@ -160,6 +160,10 @@ fn compile_one(c: &'static Category) -> CompiledCategory {
     }
 }
 
+// Only called (transitively via compile_one) from compile_all() over the
+// static CATEGORIES array — a malformed pattern is a developer bug caught
+// at startup / by any test, not a runtime risk from untrusted input.
+#[allow(clippy::panic)]
 fn compile_ci(cat_id: &str, src: &str) -> Regex {
     let wrapped = format!("(?i){src}");
     Regex::new(&wrapped)

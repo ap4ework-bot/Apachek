@@ -18,12 +18,12 @@
 //!   * `configure(_)` → `systemctl start openvpn-server@<name>`
 //!   * `teardown()`   → `systemctl stop  openvpn-server@<name>`
 //!   * `peers()`      → if `mgmt_socket` is `Some(path)`, connect via
-//!                       `tokio::net::UnixStream`, send `status 2\r\n`,
-//!                       read until `\nEND\n` (or EOF), then
-//!                       `parse_status_output`. If `None`, return
-//!                       `Ok(vec![])`.
+//!     `tokio::net::UnixStream`, send `status 2\r\n`,
+//!     read until `\nEND\n` (or EOF), then
+//!     `parse_status_output`. If `None`, return
+//!     `Ok(vec![])`.
 //!   * `is_public()`  → `true` (OpenVPN exposes a routable UDP/TCP
-//!                       endpoint by default).
+//!     endpoint by default).
 
 use crate::error::{Error, Result};
 use crate::mgmt::parse_status_output;

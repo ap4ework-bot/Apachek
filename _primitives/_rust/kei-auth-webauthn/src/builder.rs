@@ -14,9 +14,9 @@ use webauthn_rs::prelude::{Webauthn, WebauthnBuilder};
 /// Build a [`Webauthn`] instance for a given relying party.
 ///
 /// - `rp_id`     — registrable domain suffix (e.g. `"example.com"`). Must
-///                 match the `rp_origin` host (or be a parent suffix of it).
+///   match the `rp_origin` host (or be a parent suffix of it).
 /// - `rp_origin` — full origin URL, scheme + host + optional port (e.g.
-///                 `"https://example.com"` or `"http://localhost:8080"`).
+///   `"https://example.com"` or `"http://localhost:8080"`).
 /// - `rp_name`   — human-readable RP name shown in authenticator UI.
 ///
 /// Returns [`Error::Url`] if `rp_origin` does not parse, or

@@ -100,7 +100,7 @@ fn build_dep_graph(
 }
 
 /// Highest score sorts to the END of the ready queue (since we `pop`).
-fn sort_ready(ready: &mut Vec<usize>, scored: &[(RawAction, ActionKind, f64)]) {
+fn sort_ready(ready: &mut [usize], scored: &[(RawAction, ActionKind, f64)]) {
     ready.sort_by(|a, b| {
         scored[*a].2
             .partial_cmp(&scored[*b].2)

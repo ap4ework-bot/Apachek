@@ -131,7 +131,7 @@ fn load_doc(cfg: &std::path::Path, form: Form) -> Result<Value> {
         return Ok(json!({}));
     }
     let parsed: Value = match form {
-        Form::Yaml => serde_yaml::from_str(&raw).map_err(|e| Error::ConfigParseError {
+        Form::Yaml => serde_yaml::from_str(&raw).map_err(|e| Error::ConfigParse {
             path: cfg.to_path_buf(),
             reason: e.to_string(),
         })?,

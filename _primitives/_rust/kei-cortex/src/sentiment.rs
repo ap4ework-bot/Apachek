@@ -14,7 +14,7 @@
 //!   Wave 45 should introduce a build-time codegen step (one canonical
 //!   source — likely a `_schemas/emotions.json` — and emit the Rust slice
 //!   + the two TS bindings from it). This is out of scope for Wave 44d
-//!   because it requires a TS-build hook + workspace build.rs plumbing.
+//!     because it requires a TS-build hook + workspace build.rs plumbing.
 
 /// The exact nine tags permitted on the wire.
 pub const TAGS: [&str; 9] = [

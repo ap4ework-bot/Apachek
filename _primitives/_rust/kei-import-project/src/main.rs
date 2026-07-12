@@ -13,7 +13,7 @@ use kei_import_project::{
     execute_cmd, extract_skills, identify_modules, map_cmd, module_source::ModuleSource, plan_cmd,
     register_modules, render_skeleton, walk_repo, ExtractedSkill, TraitKind,
 };
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process;
 
 #[derive(Parser)]
@@ -132,7 +132,7 @@ fn main() {
     }
 }
 
-fn run_decompose(path: &PathBuf) {
+fn run_decompose(path: &Path) {
     let walk = match walk_repo(path) {
         Ok(w) => w,
         Err(e) => {
@@ -162,7 +162,7 @@ fn run_decompose(path: &PathBuf) {
     eprintln!("\n{} module(s) found in {}", modules.len(), path.display());
 }
 
-fn run_map(path: &PathBuf, threshold: f64, format: &str) {
+fn run_map(path: &Path, threshold: f64, format: &str) {
     let repo_name = path
         .file_name()
         .and_then(|s| s.to_str())
@@ -189,7 +189,7 @@ fn run_map(path: &PathBuf, threshold: f64, format: &str) {
         entries.len(), confident);
 }
 
-fn run_register(path: &PathBuf, registry_db: Option<&std::path::Path>) {
+fn run_register(path: &Path, registry_db: Option<&Path>) {
     let walk = match walk_repo(path) {
         Ok(w) => w,
         Err(e) => {

@@ -9,7 +9,7 @@
 //! the watched root; events received in the first 1 s after watcher
 //! start are dropped (FSEvents replays startup events on macOS).
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
 
 use anyhow::{Context, Result};
@@ -67,7 +67,7 @@ fn is_relevant(kind: &EventKind) -> bool {
 }
 
 /// Push one raw event's project roots into the debouncer at `now`.
-fn ingest(ev: notify::Event, root: &PathBuf, deb: &mut Debouncer, now: Instant) {
+fn ingest(ev: notify::Event, root: &Path, deb: &mut Debouncer, now: Instant) {
     if !is_relevant(&ev.kind) {
         return;
     }

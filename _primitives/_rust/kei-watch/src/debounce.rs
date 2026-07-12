@@ -36,10 +36,10 @@ impl Debouncer {
     pub fn accept(&mut self, ev: &Event) -> bool {
         let key = (ev.path.clone(), ev.kind);
         let now = Instant::now();
-        let decision = match self.last_seen.get(&key) {
-            Some(&prev) if now.duration_since(prev) < DEBOUNCE_WINDOW => false,
-            _ => true,
-        };
+        let decision = !matches!(
+            self.last_seen.get(&key),
+            Some(&prev) if now.duration_since(prev) < DEBOUNCE_WINDOW
+        );
         self.last_seen.insert(key, now);
         if self.last_seen.len() > PRUNE_THRESHOLD {
             self.prune(now);

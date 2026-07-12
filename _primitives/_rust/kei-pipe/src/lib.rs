@@ -120,6 +120,12 @@ fn execute_sorted(
     report
 }
 
+// `StepReport` self-encodes success via its own `ok: bool` field, so using
+// it as both the `Ok` and `Err` variant here is a deliberate (if unusual)
+// control-flow shape, not an oversight. Boxing the Err side to shrink the
+// Result would ripple across ~8 call sites for a stack-size micro-opt that
+// doesn't matter on this per-DAG-step-subprocess-spawn path.
+#[allow(clippy::result_large_err)]
 fn run_one_step(
     spec: &DagSpec,
     step: &Step,
@@ -137,6 +143,8 @@ fn run_one_step(
     }
 }
 
+// See run_one_step: Result<StepReport, StepReport> is deliberate.
+#[allow(clippy::result_large_err)]
 fn invoke_direct(step: &Step, input: &serde_json::Value) -> Result<StepReport, StepReport> {
     match run_atom(&step.atom, input) {
         Ok(result) => Ok(StepReport::ok(&step.id, &step.atom, result)),
@@ -144,6 +152,8 @@ fn invoke_direct(step: &Step, input: &serde_json::Value) -> Result<StepReport, S
     }
 }
 
+// See run_one_step: Result<StepReport, StepReport> is deliberate.
+#[allow(clippy::result_large_err)]
 fn invoke_with_cache(
     step: &Step,
     input: &serde_json::Value,

@@ -15,18 +15,24 @@ pub struct Stats {
 }
 
 pub fn stats(store: &Store) -> Result<Stats> {
-    let mut s = Stats::default();
-    s.total_sessions = store.conn()
+    let total_sessions = store.conn()
         .query_row("SELECT COUNT(*) FROM chat_sessions", [], |r| r.get(0))?;
-    s.active_sessions = store.conn()
+    let active_sessions = store.conn()
         .query_row("SELECT COUNT(*) FROM chat_sessions WHERE status='active'", [], |r| r.get(0))?;
-    s.archived_sessions = store.conn()
+    let archived_sessions = store.conn()
         .query_row("SELECT COUNT(*) FROM chat_sessions WHERE status='archived'", [], |r| r.get(0))?;
-    s.total_messages = store.conn()
+    let total_messages = store.conn()
         .query_row("SELECT COUNT(*) FROM chat_messages", [], |r| r.get(0))?;
-    s.total_tokens = store.conn()
+    let total_tokens = store.conn()
         .query_row("SELECT COALESCE(SUM(total_tokens),0) FROM chat_sessions", [], |r| r.get(0))?;
-    s.total_cost = store.conn()
+    let total_cost = store.conn()
         .query_row("SELECT COALESCE(SUM(total_cost),0) FROM chat_sessions", [], |r| r.get(0))?;
-    Ok(s)
+    Ok(Stats {
+        total_sessions,
+        active_sessions,
+        archived_sessions,
+        total_messages,
+        total_tokens,
+        total_cost,
+    })
 }

@@ -5,12 +5,12 @@
 //! `tests/eval.rs`). Two real impls live here:
 //!
 //!   * `RegexPredictor`     — v1: walk compiled category table, first
-//!                             matching regex wins, else "uncategorized".
+//!     matching regex wins, else "uncategorized".
 //!   * `FirmwarePredictor`  — v2: delegate to `Classifier::classify`
-//!                             with the permissive `min_len=0, threshold=-inf`
-//!                             settings mandated by the spec (we want the
-//!                             top category even for very short inputs so
-//!                             the eval never returns None for length).
+//!     with the permissive `min_len=0, threshold=-inf`
+//!     settings mandated by the spec (we want the
+//!     top category even for very short inputs so
+//!     the eval never returns None for length).
 //!
 //! Constructor Pattern: one file, one responsibility (turn text → label).
 //! All stateless functions except for the two thin predictor structs,

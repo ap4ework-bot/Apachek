@@ -108,7 +108,7 @@ fn resolve_cwd(root: &Path, requested: Option<&str>) -> Result<PathBuf, AppError
 /// Per-connection driver: spawn shell + bridge bytes both ways. The
 /// `PtyBag` returned by `spawn_pty` carries the child + reader cancel flag
 /// + writer; dropping it at the end of this function tears everything down
-/// (kill + wait + abort reader).
+///   (kill + wait + abort reader).
 async fn handle_socket(socket: WebSocket, cwd: PathBuf) {
     let (mut ws_tx, ws_rx) = socket.split();
     let (out_tx, out_rx) = mpsc::channel::<Vec<u8>>(64);

@@ -38,7 +38,7 @@ impl From<Error> for kei_runtime_core::Error {
     fn from(e: Error) -> Self {
         match e {
             Error::MissingToken => kei_runtime_core::Error::Auth(e.to_string()),
-            Error::Http { status, .. } if status == 404 => {
+            Error::Http { status: 404, .. } => {
                 kei_runtime_core::Error::NotFound(e.to_string())
             }
             Error::Http { .. } | Error::Reqwest(_) => {

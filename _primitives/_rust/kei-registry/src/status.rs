@@ -73,18 +73,18 @@ pub fn compute_status(
     git_repo: Option<&Path>,
     ledger_db: Option<&Path>,
 ) -> Result<Status> {
-    let mut s = Status::default();
-    s.blocks_by_type = block_counts(conn)?;
-    s.path_atoms = path_atom_rows(conn)?;
-    if let Some(repo) = git_repo {
-        s.branches = git_branches(repo).unwrap_or_default();
-    }
-    if let Some(db) = ledger_db {
-        if db.exists() {
-            s.agents = ledger_agent_summary(db).ok();
-        }
-    }
-    Ok(s)
+    let branches = git_repo
+        .map(|repo| git_branches(repo).unwrap_or_default())
+        .unwrap_or_default();
+    let agents = ledger_db
+        .filter(|db| db.exists())
+        .and_then(|db| ledger_agent_summary(db).ok());
+    Ok(Status {
+        blocks_by_type: block_counts(conn)?,
+        path_atoms: path_atom_rows(conn)?,
+        branches,
+        agents,
+    })
 }
 
 fn block_counts(conn: &Connection) -> Result<BTreeMap<String, u64>> {

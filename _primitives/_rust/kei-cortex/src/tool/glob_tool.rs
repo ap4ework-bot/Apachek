@@ -67,7 +67,7 @@ fn collect_matches(root: &str, regex: &Regex) -> Vec<String> {
             }
         })
         .collect();
-    hits.sort_by(|a, b| b.0.cmp(&a.0));
+    hits.sort_by_key(|h| std::cmp::Reverse(h.0));
     hits.truncate(MAX_RESULTS);
     hits.into_iter()
         .map(|(_, p)| p.to_string_lossy().to_string())

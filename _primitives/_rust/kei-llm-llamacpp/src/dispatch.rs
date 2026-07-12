@@ -9,7 +9,7 @@ use kei_llm_llamacpp::{
     BinPaths, Error, GenerateOpts, RealRunner, ServerInfo, ServerOpts, KEI_WRAPPER_VERSION,
 };
 use serde::Serialize;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 #[derive(Serialize)]
@@ -76,7 +76,7 @@ async fn run_generate(
 
 async fn run_generate_stream(
     runner: &RealRunner,
-    model: &PathBuf,
+    model: &Path,
     prompt: &str,
     opts: &GenerateOpts,
 ) -> ExitCode {
@@ -93,7 +93,7 @@ async fn run_generate_stream(
 
 async fn run_generate_oneshot(
     runner: &RealRunner,
-    model: &PathBuf,
+    model: &Path,
     prompt: &str,
     opts: &GenerateOpts,
 ) -> ExitCode {

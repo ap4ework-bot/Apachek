@@ -50,8 +50,7 @@ impl fmt::Debug for SecretString {
     }
 }
 
-/// Not `Display` — secrets should not be formatted accidentally.
-
+// Not `Display` — secrets should not be formatted accidentally.
 impl Drop for SecretString {
     fn drop(&mut self) {
         // Safety: we are zeroing the heap bytes of the String before it is

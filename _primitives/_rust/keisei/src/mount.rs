@@ -42,7 +42,7 @@ struct Success {
 /// Returns `(succeeded, failed)` where:
 ///   - succeeded: adapters that detected AND attached OK at their auto-scope
 ///   - failed:    adapters that detected BUT attach() errored
-/// Adapters that didn't detect aren't reported either way.
+///     Adapters that didn't detect aren't reported either way.
 fn mount_all(brain: &Brain) -> (Vec<Success>, Vec<(String, String)>) {
     let mut ok = Vec::new();
     let mut err = Vec::new();

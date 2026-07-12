@@ -5,7 +5,7 @@
 //! trigger_kind / trigger_spec:
 //! - `interval` → `now + secs` (never terminal).
 //! - `cron`     → next cron occurrence after `now` (falls back to
-//!                 terminal `done` if no future occurrence exists).
+//!   terminal `done` if no future occurrence exists).
 //! - `at`       → one-shot; status → `done`, next_run_at → NULL.
 //!
 //! Status transitions: cancelled rows are immutable (function returns

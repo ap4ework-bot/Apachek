@@ -4,10 +4,10 @@
 //!   - "Actionable plan"
 //!   - "Backlog"
 //!   - "Action items"
-//! and extracts the markdown table that follows. Each table row becomes one
-//! [`RawAction`]. Effort and severity are inferred from the row cells; deps
-//! are parsed from a free-text "deps:" hint inside the action cell when
-//! present.
+//!     and extracts the markdown table that follows. Each table row becomes one
+//!     [`RawAction`]. Effort and severity are inferred from the row cells; deps
+//!     are parsed from a free-text "deps:" hint inside the action cell when
+//!     present.
 //!
 //! No md crate — table format is well-defined: `| col | col | ... |`.
 

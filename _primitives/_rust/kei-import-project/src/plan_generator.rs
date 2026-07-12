@@ -72,10 +72,8 @@ pub fn build_plan(
     confidence_threshold: f64,
 ) -> MigrationPlan {
     let wip_lower = 0.3_f64;
-    let mut groups: std::collections::BTreeMap<String, (TraitKind, u8, Vec<(String, f64)>)> =
-        std::collections::BTreeMap::new();
-    let mut wip_groups: std::collections::BTreeMap<String, (TraitKind, Vec<(String, f64)>)> =
-        std::collections::BTreeMap::new();
+    let mut groups: ConfGroups = std::collections::BTreeMap::new();
+    let mut wip_groups: WipGroups = std::collections::BTreeMap::new();
     let mut unmatched = Vec::new();
     let mut conf_sum = 0.0_f64;
     let mut conf_count = 0_usize;
@@ -128,9 +126,11 @@ pub fn build_plan(
 
 type ConfGroups = std::collections::BTreeMap<String, (TraitKind, u8, Vec<(String, f64)>)>;
 type WipGroups = std::collections::BTreeMap<String, (TraitKind, Vec<(String, f64)>)>;
+/// `(priority, family_name, modules)` sorted into phase order.
+type SortedPhases = Vec<(u8, String, Vec<(String, f64)>)>;
 
 fn build_phase_list(groups: ConfGroups, wip_groups: WipGroups) -> Vec<MigrationPhase> {
-    let mut sorted: Vec<(u8, String, Vec<(String, f64)>)> = groups
+    let mut sorted: SortedPhases = groups
         .into_values()
         .map(|(_kind, pri, mods)| (pri, family_name(_kind), mods))
         .collect();

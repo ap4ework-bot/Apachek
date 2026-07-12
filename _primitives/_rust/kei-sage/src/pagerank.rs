@@ -7,6 +7,9 @@ use std::collections::HashMap;
 const DAMPING: f64 = 0.85;
 const ITERATIONS: usize = 50;
 
+/// `(node paths, adjacency list of out-edges keyed by source path)`.
+type Graph = (Vec<String>, HashMap<String, Vec<String>>);
+
 /// Compute PageRank over the edges table. Returns [(path, score)] sorted desc.
 pub fn pagerank(store: &Store) -> Result<Vec<(String, f64)>> {
     let (nodes, out_edges) = collect_graph(store)?;
@@ -23,7 +26,7 @@ pub fn pagerank(store: &Store) -> Result<Vec<(String, f64)>> {
     Ok(out)
 }
 
-fn collect_graph(store: &Store) -> Result<(Vec<String>, HashMap<String, Vec<String>>)> {
+fn collect_graph(store: &Store) -> Result<Graph> {
     let mut stmt = store.conn().prepare("SELECT src_path, dst_path FROM edges")?;
     let rows = stmt.query_map([], |r| Ok((r.get::<_, String>(0)?, r.get::<_, String>(1)?)))?;
     let mut nodes: std::collections::HashSet<String> = std::collections::HashSet::new();

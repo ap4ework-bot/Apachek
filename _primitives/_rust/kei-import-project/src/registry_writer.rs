@@ -92,9 +92,9 @@ fn build_body(module: &ProjectModule, project_root: &Path) -> Result<Vec<u8>> {
     let mut buf = Vec::new();
     for rel in paths {
         let abs = project_root.join(rel);
-        match std::fs::read(&abs) {
-            Ok(bytes) => buf.extend_from_slice(&bytes),
-            Err(_) => {} // missing / unreadable file → skip
+        // missing / unreadable file → skip
+        if let Ok(bytes) = std::fs::read(&abs) {
+            buf.extend_from_slice(&bytes);
         }
     }
     // Fall back to manifest path string so nameless modules still have a body.

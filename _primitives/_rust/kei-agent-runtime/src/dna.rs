@@ -4,13 +4,13 @@
 //! where
 //!   - `role`        — role slug, e.g. `edit-local`
 //!   - `caps-bitmap` — hyphen-separated 2-char atom codes (ordered, from
-//!                     the resolved capability list)
+//!     the resolved capability list)
 //!   - `scope-hash`  — 8-char truncated SHA-256 of canonicalised scope fields
-//!                     (32-bit; widened from 16-bit to push birthday collision
-//!                     threshold from ~256 to ~65k agents per role+caps group)
+//!     (32-bit; widened from 16-bit to push birthday collision
+//!     threshold from ~256 to ~65k agents per role+caps group)
 //!   - `body-hash`   — 8-char truncated SHA-256 of `task.body.text` (32-bit)
 //!   - `nonce`       — 8-char hex from `rand::random::<u32>()` (full 32-bit
-//!                     entropy; was 16-bit pre-2026-04 H4/M4/S3 widening)
+//!     entropy; was 16-bit pre-2026-04 H4/M4/S3 widening)
 //!
 //! Constructor Pattern: one cube = DNA identity primitive only. No I/O.
 //!

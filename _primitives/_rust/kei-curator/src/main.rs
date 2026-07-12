@@ -23,9 +23,11 @@ fn run() -> anyhow::Result<()> {
     let conn = Connection::open(&cli.db)?;
     match cli.cmd {
         Cmd::Decay { default_lambda, threshold } => {
-            let mut cfg = Config::default();
-            cfg.default_lambda = default_lambda;
-            cfg.prune_threshold = threshold;
+            let cfg = Config {
+                default_lambda,
+                prune_threshold: threshold,
+                ..Config::default()
+            };
             let r = decay_edges(&conn, &cfg)?;
             println!("updated={} pruned={}", r.updated, r.pruned);
         }

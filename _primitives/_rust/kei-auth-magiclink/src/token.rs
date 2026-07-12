@@ -11,11 +11,11 @@
 //!
 //! - `email_b64url`     — UTF-8 bytes of the email, base64url-encoded.
 //! - `expires_unix_ms`  — decimal ASCII of an i64 unix-ms timestamp,
-//!                        base64url-encoded as bytes (lets us keep the
-//!                        same alphabet end-to-end).
+//!   base64url-encoded as bytes (lets us keep the
+//!   same alphabet end-to-end).
 //! - `hmac_sha256`      — 32-byte HMAC-SHA256 of the literal ASCII
-//!                        `<email_b64url>.<expires_unix_ms_b64url>`,
-//!                        base64url-encoded.
+//!   `<email_b64url>.<expires_unix_ms_b64url>`,
+//!   base64url-encoded.
 //!
 //! Verification is stateless: no DB lookup. Revocation, if needed, is
 //! the caller's responsibility (e.g. a parallel deny-list keyed on the

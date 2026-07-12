@@ -6,7 +6,7 @@
 //! ~95%-identical form. Continue is YAML-based and does NOT use this.
 //!
 //! Error surfacing is uniform across the three callers: JSON parse
-//! failures flow through `Error::ConfigParseError` rather than the raw
+//! failures flow through `Error::ConfigParse` rather than the raw
 //! serde_json error (zed was already doing this before the dedup; the
 //! other two silently converted via `#[from]` and lost the config path).
 
@@ -17,7 +17,7 @@ use serde_json::{json, Map, Value};
 use std::path::Path;
 
 /// Load a JSON document from disk, returning `{}` for a missing or
-/// empty file. Parse errors are wrapped in `ConfigParseError { path }`
+/// empty file. Parse errors are wrapped in `ConfigParse { path }`
 /// so the user sees which file is malformed.
 pub fn load_json_or_empty(path: &Path) -> Result<Value> {
     if !path.is_file() {
@@ -27,7 +27,7 @@ pub fn load_json_or_empty(path: &Path) -> Result<Value> {
     if raw.trim().is_empty() {
         return Ok(json!({}));
     }
-    serde_json::from_str(&raw).map_err(|e| Error::ConfigParseError {
+    serde_json::from_str(&raw).map_err(|e| Error::ConfigParse {
         path: path.to_path_buf(),
         reason: e.to_string(),
     })

@@ -5,9 +5,9 @@
 //! - Files: `<repo>/.cursor/rules/<name>.mdc` (modern) OR
 //!   `<repo>/.cursorrules` (legacy, plain text). We support `.mdc` here.
 //! - Frontmatter: REQUIRED YAML. Common keys:
-//!     description: "Short description shown in rule selector"
-//!     globs: ["**/*.tsx", "src/**/*.ts"]   # file glob scope
-//!     alwaysApply: false                    # auto-include in every prompt
+//!   description: "Short description shown in rule selector"
+//!   globs: ["**/*.tsx", "src/**/*.ts"]   # file glob scope
+//!   alwaysApply: false                    # auto-include in every prompt
 //! - Body: free-form markdown rule content.
 //! - No phases convention; rules are flat. We synthesize one phase.
 

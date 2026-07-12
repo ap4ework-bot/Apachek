@@ -2,7 +2,7 @@
 //!
 //! Layout under `<home>/.claude/frustration/`:
 //!   * `<user>.firmware.gz`   — per-user trained byte n-gram (gz JSON, same
-//!                              format as `firmware::Firmware::save`)
+//!     format as `firmware::Firmware::save`)
 //!   * `<user>.last-scan.ts`  — Unix timestamp (seconds) of last nightly scan
 //!   * `<user>.feedback.jsonl` — one JSON record per user correction
 //!   * `queue.jsonl`          — shared queue of new hits awaiting review

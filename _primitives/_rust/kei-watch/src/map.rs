@@ -5,7 +5,7 @@
 //! - `Modify(Data*)` / `Modify(Any)` / `Modify(Other)` → `EventKind::Modified`
 //! - `Remove(*)`       → `EventKind::Deleted`
 //! - `Modify(Name(*))` → `EventKind::Renamed` (from_path populated if both
-//!                      endpoints present in `paths`; else None)
+//!   endpoints present in `paths`; else None)
 //! - `Access(*)` / `Modify(Metadata(*))` / `Other` / `Any` → SKIP
 //!
 //! Rationale: Access events fire constantly on macOS fsevents and are

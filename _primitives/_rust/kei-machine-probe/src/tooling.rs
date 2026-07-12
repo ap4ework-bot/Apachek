@@ -32,7 +32,7 @@ fn detect_one(runner: &dyn Runner, bin: &str, version_args: &[&str]) -> Option<S
 /// Pull a version token from `<bin> --version` output. Tries, in order:
 ///   1. `version[: ] NNNN` style (llama-server, e.g. `version: 4297`)
 ///   2. `vX.Y.Z` semver (ollama, brew, generic GNU tools)
-/// Falls back to the trimmed first non-empty line if neither matched.
+///      Falls back to the trimmed first non-empty line if neither matched.
 fn extract_version(text: &str) -> String {
     if let Some(v) = match_first(r"version[:\s]+(\d+(?:\.\d+){0,3})", text) {
         return v;

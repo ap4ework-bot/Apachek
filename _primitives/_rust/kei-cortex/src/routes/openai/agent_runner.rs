@@ -105,6 +105,7 @@ pub fn snapshot_usage(accum: &Arc<Mutex<TokenUsage>>) -> Usage {
 /// Also fires a fire-and-forget tracker write when the loop forwarder closes
 /// (reaches Done or the loop drops). `cancel` propagates client-disconnect
 /// (chat-completions) or `/v1/runs/:id/stop` (runs) into the loop.
+#[allow(clippy::too_many_arguments)]
 pub fn stream_events_with_tracking(
     state: &AppState,
     system: String,

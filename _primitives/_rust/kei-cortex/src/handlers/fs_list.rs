@@ -160,10 +160,7 @@ fn name_matches_hide_token(name: &str, token: &str) -> bool {
     if !name.starts_with(token) {
         return false;
     }
-    match name.as_bytes().get(token.len()) {
-        Some(b'-') | Some(b'_') | Some(b'.') => true,
-        _ => false,
-    }
+    matches!(name.as_bytes().get(token.len()), Some(b'-') | Some(b'_') | Some(b'.'))
 }
 
 /// Sort dirs-first / alpha-within-group; cap-note when truncated.

@@ -172,7 +172,7 @@ fn parse_status(s: &str) -> anyhow::Result<Status> {
 fn parse_caps_csv(s: Option<&str>) -> anyhow::Result<Vec<Capability>> {
     let raw = match s {
         None => return Ok(Vec::new()),
-        Some(x) if x.is_empty() => return Ok(Vec::new()),
+        Some("") => return Ok(Vec::new()),
         Some(x) => x,
     };
     raw.split(',').map(|t| parse_cap(t.trim())).collect()

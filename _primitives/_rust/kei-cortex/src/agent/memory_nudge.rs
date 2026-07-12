@@ -117,7 +117,7 @@ impl MemoryNudgeScheduler {
 
     /// Pure predicate — exposed for tests so they don't need a runtime.
     pub fn should_trigger_count(&self, count: u32) -> bool {
-        count >= self.interval && (count % self.interval) == 0
+        count >= self.interval && count.is_multiple_of(self.interval)
     }
 
     async fn cooldown_elapsed(&self) -> bool {

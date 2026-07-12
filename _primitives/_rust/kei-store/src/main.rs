@@ -80,6 +80,9 @@ fn run(cli: &Cli) -> Result<()> {
     dispatch(&*store, &cli.cmd)
 }
 
+// `dispatch` is only called after `main`'s `if let Cmd::Init {..} = ..`
+// early-returns, so `cmd` is provably never `Cmd::Init` here.
+#[allow(clippy::unreachable)]
 fn dispatch(store: &dyn MemoryStore, cmd: &Cmd) -> Result<()> {
     match cmd {
         Cmd::Read { path } => {

@@ -55,15 +55,14 @@ pub(crate) fn extract_addressbook_href(xml: &str) -> Option<String> {
     // Split on <D:response> or <response> boundaries (case-insensitive).
     let re_split = Regex::new(r"(?si)<(?:[a-zA-Z0-9_-]+:)?response[^>]*>").ok()?;
     let boundaries: Vec<_> = re_split.find_iter(xml).map(|m| m.start()).collect();
+    // Extract the href from a response chunk — compiled once, reused per chunk.
+    let re_href = Regex::new(r"(?si)<(?:[a-zA-Z0-9_-]+:)?href[^>]*>([^<]+)</").ok()?;
 
     for (i, &start) in boundaries.iter().enumerate() {
         let end = boundaries.get(i + 1).copied().unwrap_or(xml.len());
         let chunk = &xml[start..end];
 
         if chunk.to_ascii_lowercase().contains("addressbook") {
-            // Extract the href from this response chunk.
-            let re_href =
-                Regex::new(r"(?si)<(?:[a-zA-Z0-9_-]+:)?href[^>]*>([^<]+)</").ok()?;
             if let Some(cap) = re_href.captures(chunk) {
                 if let Some(m) = cap.get(1) {
                     return Some(m.as_str().trim().to_string());

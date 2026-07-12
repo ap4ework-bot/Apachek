@@ -95,7 +95,7 @@ fn last_start_epoch_for(name: &str) -> Option<u64> {
     let p = journal_path();
     let f = fs::File::open(&p).ok()?;
     let mut found: Option<u64> = None;
-    for line in BufReader::new(f).lines().flatten() {
+    for line in BufReader::new(f).lines().map_while(Result::ok) {
         let v: serde_json::Value = match serde_json::from_str(&line) {
             Ok(v) => v,
             Err(_) => continue,

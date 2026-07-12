@@ -33,7 +33,7 @@ pub enum Error {
     NoClientDetected,
 
     #[error("config parse error at {path}: {reason}")]
-    ConfigParseError { path: PathBuf, reason: String },
+    ConfigParse { path: PathBuf, reason: String },
 
     #[error(
         "brain manifest path '{0}' escapes the brain root \

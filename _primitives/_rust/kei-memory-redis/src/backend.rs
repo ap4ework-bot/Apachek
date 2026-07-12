@@ -147,7 +147,7 @@ impl MemoryBackend for RedisBackend {
                 items.push(it);
             }
         }
-        items.sort_by(|a, b| b.created_at_ms.cmp(&a.created_at_ms));
+        items.sort_by_key(|i| std::cmp::Reverse(i.created_at_ms));
         if let Some(lim) = q.limit {
             items.truncate(lim as usize);
         }

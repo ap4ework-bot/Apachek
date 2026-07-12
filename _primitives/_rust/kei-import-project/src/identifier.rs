@@ -140,8 +140,8 @@ fn python_name(content: &str, _path: &std::path::Path) -> Result<Option<String>>
 fn go_name(content: &str, _path: &std::path::Path) -> Result<Option<String>> {
     for line in content.lines() {
         let t = line.trim();
-        if t.starts_with("module ") {
-            let module = t["module ".len()..].trim();
+        if let Some(rest) = t.strip_prefix("module ") {
+            let module = rest.trim();
             let name = module.split('/').next_back().unwrap_or(module).to_owned();
             return Ok(Some(name));
         }

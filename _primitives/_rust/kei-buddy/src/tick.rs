@@ -74,6 +74,7 @@ pub async fn run_tick_with(
 }
 
 /// Collect recent messages for one topic, call extractor, persist digest.
+#[allow(clippy::too_many_arguments)]
 async fn process_topic(
     chat_log: &ChatLog,
     topics: &Topics,

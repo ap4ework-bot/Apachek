@@ -41,7 +41,7 @@ pub fn build_graph(cfg: &GraphConfig) -> Result<Space> {
     })
 }
 
-fn compute_connections(nodes: &mut Vec<Node>, links: &[Edge]) {
+fn compute_connections(nodes: &mut [Node], links: &[Edge]) {
     let mut degree: HashMap<String, usize> = HashMap::new();
     for l in links {
         *degree.entry(l.source.clone()).or_default() += 1;

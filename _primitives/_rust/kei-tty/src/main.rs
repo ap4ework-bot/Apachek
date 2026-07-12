@@ -4,7 +4,7 @@
 //!
 //! * `chat`  — interactive ratatui TUI (default mode for power users).
 //! * `send`  — one-shot: read message from `--message` or stdin, stream
-//!             response to stdout, exit. Pipe-friendly.
+//!   response to stdout, exit. Pipe-friendly.
 //!
 //! Daemon URL is read from `KEI_DAEMON_URL` (default
 //! `http://127.0.0.1:9797`). Bearer token is read from

@@ -120,13 +120,13 @@ pub(crate) fn epoch_secs_to_iso(secs: u64) -> String {
     let mut days = secs / 86400;
     let mut year = 1970u64;
     loop {
-        let leap = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+        let leap = year.is_multiple_of(4) && (!year.is_multiple_of(100) || year.is_multiple_of(400));
         let dy = if leap { 366 } else { 365 };
         if days < dy { break; }
         days -= dy;
         year += 1;
     }
-    let leap = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
+    let leap = year.is_multiple_of(4) && (!year.is_multiple_of(100) || year.is_multiple_of(400));
     let months = if leap { [31u64,29,31,30,31,30,31,31,30,31,30,31] }
                  else    { [31,28,31,30,31,30,31,31,30,31,30,31] };
     let mut month = 1u64;

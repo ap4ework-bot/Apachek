@@ -7,7 +7,7 @@
 //! Constructor surface:
 //!   * [`TelegramChannel::from_env`]    — reads `TELEGRAM_BOT_TOKEN`
 //!     + `TELEGRAM_CHAT_ID`, defaults base URL to
-//!     `https://api.telegram.org`.
+//!       `https://api.telegram.org`.
 //!   * [`TelegramChannel::with_config`] — explicit base URL, token,
 //!     chat_id (used in wiremock tests).
 //!

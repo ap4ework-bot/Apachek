@@ -2,13 +2,13 @@
 //!
 //! Subcommands:
 //!   - `check <name>`  — reads tool-use JSON from stdin, runs registry
-//!                       gate, emits permissionDecision JSON, exits 0 or 2.
+//!     gate, emits permissionDecision JSON, exits 0 or 2.
 //!   - `verify <name>` — reads env (AGENT_ID, TASK_TOML, WORKTREE_PATH,
-//!                       MAIN_REPO, RUN_MODE), runs registry verify,
-//!                       exits 0 on pass or non-zero with stderr message.
+//!     MAIN_REPO, RUN_MODE), runs registry verify,
+//!     exits 0 on pass or non-zero with stderr message.
 //!   - `fork <source> --as <new-name> [--kit-root <dir>]` — copy an
-//!                       existing capability dir under a new
-//!                       `<cat>::<slug>` name and record lineage.
+//!     existing capability dir under a new
+//!     `<cat>::<slug>` name and record lineage.
 
 use kei_capability::fork;
 

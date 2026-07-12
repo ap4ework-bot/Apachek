@@ -65,7 +65,7 @@ impl PingStore for RedisPingStore {
                 }
             }
         }
-        out.sort_by(|a, b| b.last_seen_epoch.cmp(&a.last_seen_epoch));
+        out.sort_by_key(|i| std::cmp::Reverse(i.last_seen_epoch));
         Ok(out)
     }
 
