@@ -9,7 +9,9 @@
 set -eu
 
 CFG="$HOME/.claude/settings.json"
-BIN="$HOME/.claude/_primitives/_rust/target/release/kei-mcp"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+BIN="$SCRIPT_DIR/../_primitives/_rust/target/release/kei-mcp"
+[ -f "$BIN" ] || BIN="$HOME/.claude/_primitives/_rust/target/release/kei-mcp"
 [ -f "$BIN" ] || BIN="$(command -v kei-mcp 2>/dev/null || true)"
 
 if [ -z "$BIN" ] || [ ! -x "$BIN" ]; then
