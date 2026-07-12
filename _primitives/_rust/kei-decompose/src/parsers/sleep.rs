@@ -50,11 +50,18 @@ impl FormatParser for SleepParser {
     }
 }
 
+// Regex literals below are either hardcoded or built from a `regex::escape`d
+// input, so the compiled pattern is always syntactically valid — a syntax
+// error would fail every test run, not just an edge case, so `.unwrap()` is
+// not a real risk site.
+
+#[allow(clippy::unwrap_used)]
 fn section_present(md: &str, name: &str) -> bool {
     let re = Regex::new(&format!(r"(?im)^#{{1,6}}\s+{}\b", regex::escape(name))).unwrap();
     re.is_match(md)
 }
 
+#[allow(clippy::unwrap_used)]
 fn checklist_regex() -> Regex {
     Regex::new(r"^\s*-\s+\[\s\]\s+(.+)$").unwrap()
 }
@@ -89,6 +96,7 @@ fn build_checklist_action(
         .with_body(body)
 }
 
+#[allow(clippy::unwrap_used)]
 fn extract_pattern_rows(lines: &[&str], source_path: &str, base_n: usize) -> Vec<Action> {
     let pattern_heading = Regex::new(r"(?im)^#{1,6}\s+patterns\b").unwrap();
     let mut in_section = false;

@@ -22,6 +22,9 @@ pub const NO_DEP_BUMP_VERIFY: CommandVerify = CommandVerify {
     result_mapper: None,
 };
 
+// Hardcoded regex literal: a syntax error would fail every test run, not
+// just an edge case, so `.unwrap()` is not a real risk site.
+#[allow(clippy::unwrap_used)]
 static VERSION_LINE: Lazy<Regex> =
     Lazy::new(|| Regex::new(r#"(?m)^[-+]\s*version\s*=\s*".+""#).unwrap());
 

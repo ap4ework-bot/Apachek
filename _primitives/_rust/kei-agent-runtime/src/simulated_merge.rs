@@ -24,7 +24,10 @@ pub fn run_simulated_merge(
         .map_err(|e| anyhow!("agent_id rejected in run_simulated_merge: {e}"))?;
     let tmp = std::env::temp_dir().join(format!("kei-test-merge-{agent_id}"));
     let _ = std::fs::remove_dir_all(&tmp);
-    run_git(main_repo, &["worktree", "add", "-d", tmp.to_str().unwrap(), "main"])
+    let tmp_str = tmp
+        .to_str()
+        .ok_or_else(|| anyhow!("tmp worktree path {} is not valid UTF-8", tmp.display()))?;
+    run_git(main_repo, &["worktree", "add", "-d", tmp_str, "main"])
         .context("git worktree add failed")?;
     let diff = run_git(agent_worktree, &["diff", "main"])
         .context("git diff against main failed")?;

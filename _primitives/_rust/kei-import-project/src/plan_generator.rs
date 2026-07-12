@@ -81,32 +81,35 @@ pub fn build_plan(
     let mut conf_count = 0_usize;
 
     for entry in map_entries {
-        let conf = entry.best_match.as_ref().map(|m| m.confidence).unwrap_or(0.0);
-        if conf >= confidence_threshold {
-            let kind = entry.best_match.as_ref().unwrap().kind;
-            let pri = priority_for(kind);
-            let fam = family_name(kind);
-            groups
-                .entry(fam)
-                .or_insert_with(|| (kind, pri, Vec::new()))
-                .2
-                .push((entry.module.clone(), conf));
-            conf_sum += conf;
-            conf_count += 1;
-        } else if conf >= wip_lower {
-            let kind = entry.best_match.as_ref().map(|m| m.kind);
-            if let Some(k) = kind {
-                let fam = family_name(k);
+        // Match on `best_match` once and bind it — the old code re-derived
+        // `conf` via `.unwrap_or(0.0)` and then separately re-unwrapped
+        // `best_match` inside the `if`, which would panic on a `None`
+        // `best_match` whenever `confidence_threshold <= 0.0` (0.0 >= a
+        // non-positive threshold is true). Binding once makes that
+        // impossible by construction.
+        match entry.best_match.as_ref() {
+            Some(m) if m.confidence >= confidence_threshold => {
+                let pri = priority_for(m.kind);
+                let fam = family_name(m.kind);
+                groups
+                    .entry(fam)
+                    .or_insert_with(|| (m.kind, pri, Vec::new()))
+                    .2
+                    .push((entry.module.clone(), m.confidence));
+                conf_sum += m.confidence;
+                conf_count += 1;
+            }
+            Some(m) if m.confidence >= wip_lower => {
+                let fam = family_name(m.kind);
                 wip_groups
                     .entry(fam)
-                    .or_insert_with(|| (k, Vec::new()))
+                    .or_insert_with(|| (m.kind, Vec::new()))
                     .1
-                    .push((entry.module.clone(), conf));
-            } else {
+                    .push((entry.module.clone(), m.confidence));
+            }
+            _ => {
                 unmatched.push(entry.module.clone());
             }
-        } else {
-            unmatched.push(entry.module.clone());
         }
     }
 

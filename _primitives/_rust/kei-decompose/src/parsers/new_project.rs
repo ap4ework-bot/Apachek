@@ -43,6 +43,9 @@ impl FormatParser for NewProjectParser {
     }
 }
 
+// Hardcoded regex literal: a syntax error would fail every test run, not
+// just an edge case, so `.unwrap()` is not a real risk site.
+#[allow(clippy::unwrap_used)]
 fn phase_heading_regex() -> Regex {
     Regex::new(r"(?im)^#{1,6}\s+phase\s+(\d+)(?:\s*[:\-]\s*(.+))?$").unwrap()
 }

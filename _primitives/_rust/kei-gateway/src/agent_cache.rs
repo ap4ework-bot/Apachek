@@ -54,6 +54,8 @@ pub struct AgentCache {
 
 impl AgentCache {
     pub fn new(capacity: usize, ttl: Duration) -> Self {
+        // `.max(1)` guarantees a nonzero input, so this can never be `None`.
+        #[allow(clippy::unwrap_used)]
         let cap = NonZeroUsize::new(capacity.max(1)).unwrap();
         Self {
             inner: Arc::new(Mutex::new(LruCache::new(cap))),

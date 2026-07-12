@@ -48,6 +48,9 @@ static FULL_BYPASS_WARNING: std::sync::Once = std::sync::Once::new();
 
 /// Bounded LRU; size capped to prevent unbounded growth in long-lived
 /// daemons. Entries past TTL are dropped on lookup.
+// `CACHE_CAPACITY` is a nonzero compile-time constant above, so this can
+// never be `None`.
+#[allow(clippy::unwrap_used)]
 static CACHE: Lazy<Mutex<LruCache<String, (Instant, String)>>> = Lazy::new(|| {
     Mutex::new(LruCache::new(NonZeroUsize::new(CACHE_CAPACITY).unwrap()))
 });
@@ -211,6 +214,9 @@ async fn fetch(url: &str, parsed: &Url, resolved: &Resolved) -> Result<String, T
 }
 
 /// Strip script/style blocks, then all tags, then collapse whitespace.
+// Hardcoded regex literals below: a syntax error would fail every test run,
+// not just an edge case, so `.unwrap()` is not a real risk site.
+#[allow(clippy::unwrap_used)]
 pub(crate) fn strip_html(html: &str) -> String {
     static SCRIPT: Lazy<Regex> = Lazy::new(|| {
         Regex::new(r"(?is)<(script|style)[^>]*>.*?</\s*(script|style)\s*>").unwrap()

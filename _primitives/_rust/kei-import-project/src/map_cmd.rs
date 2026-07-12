@@ -56,7 +56,7 @@ pub fn build_map(repo_path: &Path, threshold: f64) -> Result<Vec<MapEntry>> {
     entries.sort_by(|a, b| {
         let ca = a.best_match.as_ref().map(|m| m.confidence).unwrap_or(0.0);
         let cb = b.best_match.as_ref().map(|m| m.confidence).unwrap_or(0.0);
-        cb.partial_cmp(&ca).unwrap()
+        cb.total_cmp(&ca)
     });
     Ok(entries)
 }

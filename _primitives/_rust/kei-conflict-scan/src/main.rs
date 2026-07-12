@@ -69,6 +69,9 @@ fn run_all(root: &std::path::Path, only: Option<Only>) -> Vec<Conflict> {
     out
 }
 
+// `serde_json::to_string_pretty` on a `json!`-built `Value` composed only of
+// strings/numbers/derived-Serialize types can't realistically fail.
+#[allow(clippy::unwrap_used)]
 fn emit_json(hits: &[Conflict]) {
     let wrapper = serde_json::json!({
         "hit_count": hits.len(),

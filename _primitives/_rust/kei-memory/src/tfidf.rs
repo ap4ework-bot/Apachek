@@ -13,6 +13,9 @@ use rusqlite::{params, Connection, Result};
 use std::collections::HashMap;
 
 /// Tokenise free text into lowercase alphanumeric word stems (≥3 chars).
+// Hardcoded regex literal: a syntax error would fail every test run, not
+// just an edge case, so `.unwrap()` is not a real risk site.
+#[allow(clippy::unwrap_used)]
 pub fn tokenise(text: &str) -> Vec<String> {
     let re = Regex::new(r"[A-Za-z][A-Za-z0-9_]{2,}").unwrap();
     re.find_iter(text)

@@ -11,6 +11,9 @@ use regex::Regex;
 /// Compiled allowlist for fal.ai host names.
 /// Accepted: `<one-or-more-subdomains>.fal.ai`, `.fal.media`, `.fal.run`.
 /// Example: `rest.alpha.fal.ai`, `queue.fal.run`, `cdn.fal.media`.
+// Hardcoded regex literal: a syntax error would fail every test run, not
+// just an edge case, so `.unwrap()` is not a real risk site.
+#[allow(clippy::unwrap_used)]
 static FAL_HOST_RE: Lazy<Regex> =
     Lazy::new(|| Regex::new(r"^([a-z0-9-]+\.)+fal\.(ai|media|run)$").unwrap());
 

@@ -21,11 +21,13 @@ use std::sync::OnceLock;
 /// pattern is malformed the failure is caught the first time `classify`
 /// runs in tests (panic is the desired sentinel — there is no recovery
 /// path for a bad library-author regex).
+#[allow(clippy::unwrap_used)]
 fn permission_denied_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| Regex::new(r"(?i)permission\s+denied|access\s+denied").unwrap())
 }
 
+#[allow(clippy::unwrap_used)]
 fn user_correction_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| {
@@ -38,16 +40,19 @@ fn user_correction_re() -> &'static Regex {
     })
 }
 
+#[allow(clippy::unwrap_used)]
 fn retry_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| Regex::new(r"(?i)retry|retrying|attempt\s+\d+|try\s+again").unwrap())
 }
 
+#[allow(clippy::unwrap_used)]
 fn worktree_error_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| Regex::new(r"(?i)worktree.*(error|denied|fail)").unwrap())
 }
 
+#[allow(clippy::unwrap_used)]
 fn cargo_workspace_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| Regex::new(r"(?i)cargo.*workspace|workspace.*cargo").unwrap())

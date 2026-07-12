@@ -24,6 +24,9 @@ pub const TESTS_GREEN: CommandVerify = CommandVerify {
     result_mapper: None,
 };
 
+// Hardcoded regex literal: a syntax error would fail every test run, not
+// just an edge case, so `.unwrap()` is not a real risk site.
+#[allow(clippy::unwrap_used)]
 static TEST_SUMMARY: Lazy<Regex> =
     Lazy::new(|| Regex::new(r"test result: ok\. (\d+) passed").unwrap());
 

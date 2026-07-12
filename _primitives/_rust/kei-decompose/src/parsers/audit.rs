@@ -51,12 +51,17 @@ impl FormatParser for AuditParser {
     }
 }
 
+// Hardcoded regex literals below: a syntax error would fail every test run,
+// not just an edge case, so `.unwrap()` is not a real risk site.
+
+#[allow(clippy::unwrap_used)]
 fn wave_heading_regex() -> Regex {
     Regex::new(r"(?im)^#{1,6}\s+(wave\s+\d+|audit\s+report)\b").unwrap()
 }
 
 /// Locate the `## Priority Matrix` heading, then return the index of the
 /// header row of the table that follows.
+#[allow(clippy::unwrap_used)]
 fn find_priority_matrix(lines: &[&str]) -> Option<usize> {
     let heading_re = Regex::new(r"(?im)^#{1,6}\s+priority\s+matrix\b").unwrap();
     let mut in_section = false;

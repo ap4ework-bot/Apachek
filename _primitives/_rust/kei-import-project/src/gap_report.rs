@@ -44,7 +44,7 @@ fn render_confident(out: &mut String, analyses: &[ModuleAnalysis]) {
         .iter()
         .filter_map(|a| a.best_confident())
         .collect();
-    rows.sort_by(|a, b| b.1.confidence.partial_cmp(&a.1.confidence).unwrap());
+    rows.sort_by(|a, b| b.1.confidence.total_cmp(&a.1.confidence));
 
     if rows.is_empty() {
         out.push_str("| — | — | — | — |\n");
@@ -68,7 +68,7 @@ fn render_weak(out: &mut String, analyses: &[ModuleAnalysis]) {
         .iter()
         .filter_map(|a| a.best_weak())
         .collect();
-    rows.sort_by(|a, b| b.1.confidence.partial_cmp(&a.1.confidence).unwrap());
+    rows.sort_by(|a, b| b.1.confidence.total_cmp(&a.1.confidence));
 
     if rows.is_empty() {
         out.push_str("| — | — | — | — |\n");

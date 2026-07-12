@@ -46,14 +46,20 @@ impl FormatParser for ArchitectureParser {
     }
 }
 
+// Hardcoded regex literals below: a syntax error would fail every test run,
+// not just an edge case, so `.unwrap()` is not a real risk site.
+
+#[allow(clippy::unwrap_used)]
 fn decision_heading_regex() -> Regex {
     Regex::new(r"(?im)^#{1,6}\s+decision\b").unwrap()
 }
 
+#[allow(clippy::unwrap_used)]
 fn recommendation_heading_regex() -> Regex {
     Regex::new(r"(?im)^#{1,6}\s+recommendation(s)?\b").unwrap()
 }
 
+#[allow(clippy::unwrap_used)]
 fn numbered_item_regex() -> Regex {
     Regex::new(r"^\s*(\d+)\.\s+(.+)$").unwrap()
 }

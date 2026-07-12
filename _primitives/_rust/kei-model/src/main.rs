@@ -78,6 +78,9 @@ fn cmd_resolve(a: ResolveArgs) -> anyhow::Result<()> {
     Ok(())
 }
 
+// `serde_json::to_string_pretty` on a `json!`-built `Value` composed only of
+// strings/numbers/enums can't realistically fail — not a real risk site.
+#[allow(clippy::unwrap_used)]
 fn print_resolution(r: &kei_model::selector::Resolution) {
     let body = serde_json::json!({
         "model_id": r.model.id,
@@ -99,6 +102,8 @@ fn cmd_price(a: PriceArgs) -> anyhow::Result<()> {
     Ok(())
 }
 
+// Same infallible-in-practice serde_json::to_string_pretty pattern as above.
+#[allow(clippy::unwrap_used)]
 fn print_price(model_id: &str, micro: u64, status: PricingStatus) {
     let display_cents = (micro as f64) / 1_000_000.0;
     let body = serde_json::json!({
@@ -110,6 +115,8 @@ fn print_price(model_id: &str, micro: u64, status: PricingStatus) {
     println!("{}", serde_json::to_string_pretty(&body).unwrap());
 }
 
+// Same infallible-in-practice serde_json::to_string_pretty pattern as above.
+#[allow(clippy::unwrap_used)]
 fn cmd_providers(a: ProvidersArgs) -> anyhow::Result<()> {
     let path = Registry::resolve_path(a.models_toml.as_deref())?;
     let reg = Registry::load(&path)?;

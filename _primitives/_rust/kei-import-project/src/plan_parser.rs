@@ -96,6 +96,10 @@ fn parse_phase_blocks(section: &str) -> Result<Vec<ParsedPhase>> {
     let mut phases = Vec::with_capacity(matches.len());
 
     for (i, m) in matches.iter().enumerate() {
+        // `m` is itself the substring `heading_re` already matched via
+        // `find_iter`, so re-running the same pattern against `m.as_str()`
+        // is guaranteed to match at the start — this can't fail.
+        #[allow(clippy::unwrap_used)]
         let caps = heading_re.captures(m.as_str()).unwrap();
         let id = caps[1].to_owned();
         let trait_family = caps[2].trim().to_owned();

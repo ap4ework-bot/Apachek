@@ -25,16 +25,22 @@ const KNOWN_PRIMITIVES: &[&str] = &[
     "motion-design", "motion-design", "motion-design",
 ];
 
+// Hardcoded regex literals below: a syntax error would fail every test run,
+// not just an edge case, so `.unwrap()` is not a real risk site.
+
+#[allow(clippy::unwrap_used)]
 fn bash_fence_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| Regex::new(r"(?ms)^```(?:bash|sh|shell)\s*\n(.*?)^```").unwrap())
 }
 
+#[allow(clippy::unwrap_used)]
 fn slash_cmd_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| Regex::new(r"(?m)(?:^|\s)(/[a-z][a-z0-9_-]{1,40})\b").unwrap())
 }
 
+#[allow(clippy::unwrap_used)]
 fn kei_primitive_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| Regex::new(r"\b(kei-[a-z][a-z0-9-]+)\s+([a-z][a-z0-9-]{1,30})\b").unwrap())

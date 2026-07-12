@@ -136,6 +136,9 @@ fn check_enum(enum_schema: &Value, value: &Value, path: &str) -> Result<(), Stri
     Ok(())
 }
 
+// Only called from the `Value::Object(_)` match arm in the dispatcher below,
+// so `value` is provably an object here — `.unwrap()` can't fail.
+#[allow(clippy::unwrap_used)]
 fn check_object(schema: &Value, value: &Value, path: &str) -> Result<(), String> {
     let obj = value.as_object().unwrap();
     if let Some(required) = schema.get("required").and_then(|v| v.as_array()) {
@@ -164,6 +167,9 @@ fn check_object(schema: &Value, value: &Value, path: &str) -> Result<(), String>
     Ok(())
 }
 
+// Only called from the `Value::Array(_)` match arm in the dispatcher above,
+// so `value` is provably an array here — `.unwrap()` can't fail.
+#[allow(clippy::unwrap_used)]
 fn check_array(schema: &Value, value: &Value, path: &str) -> Result<(), String> {
     let arr = value.as_array().unwrap();
     if let Some(min) = schema.get("minItems").and_then(|v| v.as_u64()) {

@@ -143,13 +143,20 @@ fn signature_for(name: &str) -> Vec<&'static str> {
 
 fn parse_with_hint(md: &Path, hint: FormatHint) -> Result<Vec<Action>, ExitCode> {
     let body = read_or_die(md)?;
-    let parser = match hint {
-        FormatHint::Auto => pick_auto_parser(&body)?,
-        FormatHint::Research => parser_by_name("research").unwrap(),
-        FormatHint::Audit => parser_by_name("audit").unwrap(),
-        FormatHint::Sleep => parser_by_name("sleep").unwrap(),
-        FormatHint::Architecture => parser_by_name("architecture").unwrap(),
-        FormatHint::NewProject => parser_by_name("new-project").unwrap(),
+    let name = match hint {
+        FormatHint::Auto => None,
+        FormatHint::Research => Some("research"),
+        FormatHint::Audit => Some("audit"),
+        FormatHint::Sleep => Some("sleep"),
+        FormatHint::Architecture => Some("architecture"),
+        FormatHint::NewProject => Some("new-project"),
+    };
+    let parser = match name {
+        None => pick_auto_parser(&body)?,
+        Some(name) => parser_by_name(name).ok_or_else(|| {
+            eprintln!("registered parser {name} not resolvable");
+            ExitCode::from(2)
+        })?,
     };
     parser.parse(md).map_err(|e| {
         eprintln!("parse failed: {e}");

@@ -27,6 +27,11 @@ pub(crate) struct ToolboxProxyUrl {
 #[derive(Debug, Clone, Default)]
 pub(crate) struct ToolboxCache(pub Arc<Mutex<HashMap<String, String>>>);
 
+// `Mutex::lock().unwrap()` below only panics if the mutex is poisoned
+// (a prior holder panicked while locked). This is a simple in-memory
+// URL cache with no cross-request invariants to corrupt, so propagating
+// a poison panic is the safer default here.
+#[allow(clippy::unwrap_used)]
 impl ToolboxCache {
     pub fn new() -> Self {
         Self::default()

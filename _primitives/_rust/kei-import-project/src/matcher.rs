@@ -38,20 +38,26 @@ pub fn match_module(source: &ModuleSource) -> Vec<MatchScore> {
         .iter()
         .filter_map(|p| score_pattern(p, &fp))
         .collect();
-    results.sort_by(|a, b| b.confidence.partial_cmp(&a.confidence).unwrap());
+    results.sort_by(|a, b| b.confidence.total_cmp(&a.confidence));
     results
 }
 
+// Hardcoded regex literals below: a syntax error would fail every test run,
+// not just an edge case, so `.unwrap()` is not a real risk site.
+
+#[allow(clippy::unwrap_used)]
 fn impl_trait_re() -> &'static regex::Regex {
     static RE: OnceLock<regex::Regex> = OnceLock::new();
     RE.get_or_init(|| regex::Regex::new(r"\bimpl\s+(\w+)\s+for\s+\w+").unwrap())
 }
 
+#[allow(clippy::unwrap_used)]
 fn fn_name_re() -> &'static regex::Regex {
     static RE: OnceLock<regex::Regex> = OnceLock::new();
     RE.get_or_init(|| regex::Regex::new(r"(?:async\s+)?fn\s+(\w+)\s*[<(]").unwrap())
 }
 
+#[allow(clippy::unwrap_used)]
 fn use_segment_re() -> &'static regex::Regex {
     static RE: OnceLock<regex::Regex> = OnceLock::new();
     RE.get_or_init(|| regex::Regex::new(r"\buse\s+((?:\w+::)*\w+)").unwrap())

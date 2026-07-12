@@ -59,6 +59,9 @@ struct TableLocation {
     cols: ColumnMap,
 }
 
+// Hardcoded regex literal: a syntax error would fail every test run, not
+// just an edge case, so `.unwrap()` is not a real risk site.
+#[allow(clippy::unwrap_used)]
 fn heading_regex() -> Regex {
     Regex::new(r"(?im)^#{1,6}\s+(actionable\s+plan|backlog|action\s+items)\b").unwrap()
 }
@@ -180,6 +183,9 @@ fn split_pipes(line: &str) -> Vec<String> {
         .collect()
 }
 
+// Hardcoded regex literal: a syntax error would fail every test run, not
+// just an edge case, so `.unwrap()` is not a real risk site.
+#[allow(clippy::unwrap_used)]
 fn parse_deps_hint(text: &str) -> Vec<String> {
     let re = Regex::new(r"(?i)\b(?:deps|after)\s*[:#]?\s*([0-9, ]+)").unwrap();
     if let Some(c) = re.captures(text) {

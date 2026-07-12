@@ -57,6 +57,8 @@ impl SessionStore {
             .await?;
         sqlx::query(SCHEMA).execute(&pool).await?;
 
+        // `.max(1)` guarantees a nonzero input, so this can never be `None`.
+        #[allow(clippy::unwrap_used)]
         let cap = NonZeroUsize::new(cache_capacity.max(1)).unwrap();
         Ok(Self {
             pool,

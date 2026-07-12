@@ -57,6 +57,11 @@ fn pem_marker(label: &str) -> String {
     format!("{d}BEGIN {label}{d}")
 }
 
+// INVARIANT: every current call site passes either a hardcoded regex
+// literal or the output of `regex::escape(...)` (always syntactically
+// valid) — never a raw runtime string. If you add a call with a
+// non-escaped dynamic `pat`, this `.unwrap()` becomes a real panic risk.
+#[allow(clippy::unwrap_used)]
 fn rx(id: &'static str, pat: &str, sev: Severity, src: &'static str) -> RegexPattern {
     RegexPattern {
         id,

@@ -7,6 +7,10 @@ use crate::schema::*;
 use std::fmt::Write;
 
 /// Build the overlay prefix that a `PetManifest` contributes to a system prompt.
+// `write!`/`writeln!` into a `String` cannot fail (`String`'s `fmt::Write` impl
+// is infallible barring a custom `Display` that itself errors, which none of
+// the types formatted here do) — the `.unwrap()`s below are not risk sites.
+#[allow(clippy::unwrap_used)]
 pub fn system_prompt(m: &PetManifest) -> String {
     let mut s = String::with_capacity(1024);
 

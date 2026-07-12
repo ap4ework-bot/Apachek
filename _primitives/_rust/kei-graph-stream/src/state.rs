@@ -22,6 +22,12 @@ impl Default for AliveState {
     }
 }
 
+// `Mutex::lock().unwrap()` below only panics if the mutex is poisoned
+// (a prior holder panicked while locked). `inner` is a simple in-memory
+// cache with no cross-request invariants to corrupt, so propagating a
+// poison panic (rather than silently recovering stale/partial data) is
+// the safer default here.
+#[allow(clippy::unwrap_used)]
 impl AliveState {
     pub fn new() -> Self {
         Self {

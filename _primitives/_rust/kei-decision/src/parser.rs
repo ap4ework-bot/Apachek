@@ -105,6 +105,9 @@ fn find_action_table(lines: &[&str]) -> Option<TableLocation> {
     None
 }
 
+// Hardcoded regex literal: a syntax error would fail every test run, not
+// just an edge case, so `.unwrap()` is not a real risk site.
+#[allow(clippy::unwrap_used)]
 fn heading_regex() -> Regex {
     // Matches `## Actionable plan`, `### Backlog`, `## Action items` (any depth).
     Regex::new(r"(?i)^#{1,6}\s+(actionable\s+plan|backlog|action\s+items)\b").unwrap()
@@ -179,6 +182,9 @@ fn split_pipes(line: &str) -> Vec<String> {
 }
 
 /// `deps: 1, 2` or `(after #3)` → vec of id strings.
+// Hardcoded regex literal: a syntax error would fail every test run, not
+// just an edge case, so `.unwrap()` is not a real risk site.
+#[allow(clippy::unwrap_used)]
 fn parse_deps_hint(text: &str) -> Vec<String> {
     let re = Regex::new(r"(?i)\b(?:deps|after)\s*[:#]?\s*([0-9, ]+)").unwrap();
     if let Some(c) = re.captures(text) {

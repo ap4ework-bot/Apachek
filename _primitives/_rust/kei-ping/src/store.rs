@@ -59,6 +59,9 @@ pub async fn auto_select() -> Result<Box<dyn PingStore>> {
     } else {
         BackendKind::Sqlite
     };
+    // `cache` is always `config_path()`'s `home.join(".claude/config/...")`,
+    // a multi-component path, so `.parent()` can never be `None`.
+    #[allow(clippy::unwrap_used)]
     let _ = std::fs::create_dir_all(cache.parent().unwrap());
     let _ = std::fs::write(&cache, kind.as_str());
 

@@ -37,6 +37,9 @@ fn emit_human(broken: &[kei_graph_check::graph::BrokenRef]) {
     }
 }
 
+// `serde_json::to_string_pretty` on a `json!`-built `Value` composed only of
+// strings/numbers/derived-Serialize types can't realistically fail.
+#[allow(clippy::unwrap_used)]
 fn emit_json(broken: &[kei_graph_check::graph::BrokenRef]) {
     let v = serde_json::json!({ "broken_count": broken.len(), "broken": broken });
     println!("{}", serde_json::to_string_pretty(&v).unwrap());
